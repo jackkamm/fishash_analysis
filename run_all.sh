@@ -1,11 +1,4 @@
 
-if [ ! -d "outs" ]; then
-    echo 'Please create directory (or symlink) named "outs/" to store outputs'
-    exit 1
-fi
-
-source 00_setup_env.sh
-
 sh 10_simulate.sh
 
 sh 20_download_barnyard_data.sh
