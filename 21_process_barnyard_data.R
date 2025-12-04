@@ -1,5 +1,8 @@
-raw_data_dir <- "outs/barnyard_data/raw"
-processed_data_dir <- "outs/barnyard_data/processed"
+source("include/env_vars.sh")
+
+OUTS <- normalizePath(OUTS)
+raw_data_dir <- file.path(OUTS, "barnyard_data/raw")
+processed_data_dir <- file.path(OUTS, "barnyard_data/processed")
 
 ## Load libraries
 

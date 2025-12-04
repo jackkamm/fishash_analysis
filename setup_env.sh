@@ -16,6 +16,7 @@ conda install python=3.11 r \
       r-reticulate \
       bioconductor-splatter \
       r-patchwork \
+      r-pals \
       bioconductor-multiassayexperiment \
       bioconductor-singlecellexperiment \
       cmdstanpy=1.2 muon=0.1.7
@@ -43,3 +44,5 @@ Rscript -e 'devtools::install_github("katsevich-lab/sceptre", upgrade=FALSE)'
 uv tool install geomux
 
 conda env export > environment.yaml
+
+conda deactivate

@@ -123,3 +123,38 @@ get_long_subset_df <- function(df) {
                             names_to='stat', values_to='value') %>%
         subset_methods()
 }
+
+# for extracting trace report and plot timings
+clean_trace_df <- function(df_trace) {
+    df_trace %>%
+        dplyr::filter(status == 'COMPLETED') %>%
+        dplyr::filter(startsWith(method, 'run_')) %>%
+        dplyr::mutate(sim_label=stringr::str_match(tag, '.*simlab=(.*)')[,2]) %>%
+        dplyr::mutate(method=stringr::str_match(method, 'run_(.*)')[,2]) %>%
+        dplyr::mutate(method=dplyr::if_else(
+            method=='cleanser',
+            paste0('cleanser_', stringr::str_match(tag, 'seqtech=(.*),simlab=.*')[,2], "_0.95"),
+            method
+        )) %>%
+        dplyr::mutate(method=dplyr::if_else(
+            method=='fishash',
+            paste0('fishash_refit', stringr::str_match(tag, 'refit=(.*),simlab=.*')[,2]),
+            method
+        )) %>%
+        dplyr::mutate(method=dplyr::if_else(
+            method=='geomux',
+            paste0('geomux_minumi', stringr::str_match(tag, 'minumi=(.*),simlab=.*')[,2]),
+            method
+        )) %>%
+        dplyr::mutate(method=dplyr::if_else(
+            method=='demuxem',
+            paste0('demuxem_signal', stringr::str_match(tag, 'minsignal=(.*),simlab=.*')[,2]),
+            method
+        )) %>%
+        dplyr::mutate(seconds=as.numeric(stringr::str_match(
+            lubridate::seconds(lubridate::as.period(toupper(realtime))),
+            "(.*)S"
+        )[,2])) %>%
+        dplyr::mutate(minutes=seconds / 60) ->
+        df_trace_sub
+}

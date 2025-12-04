@@ -1,2 +1,0 @@
-NX_PROFILE="slurm"
-GUIDEBENDER_OUT_DIR="outs"

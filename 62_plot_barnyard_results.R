@@ -3,22 +3,20 @@ library(ggplot2)
 
 library(SummarizedExperiment)
 
-source("env_vars.sh")
+source("include/env_vars.sh")
+source("include/plotting_helper_functions.R")
 
-out_dir <- GUIDEBENDER_OUT_DIR
-plot_dir <- file.path(out_dir, "plots")
+plot_dir <- file.path(OUTS, "plots")
 dir.create(plot_dir)
-
-source("40_plotting_helper_functions.R")
 
 ## Load the full results
 
 
 rep_list <- readRDS(
     file.path(
-        out_dir,
+        OUTS,
         "results",
-        "cleanser_barnyard_data",
+        "barnyard_data",
         "combined_results.Rds"
     )
 )
@@ -91,7 +89,7 @@ colData(se_gex)$mito_frac <- with(colData(se_gex),
                                       mito_sum / sum_gex)
 
 # same cutoff for empty droplets as in CLEANSER Fig 2I
-colData(se_gex)$is_empty <- colData(sum_gex) <= 100
+colData(se_gex)$is_empty <- colData(se_gex)$sum_gex <= 100
 
 # from original cleanser paper
 colData(se_gex)$orig_qc_pass <- with(

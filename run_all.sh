@@ -1,10 +1,24 @@
 
-sh 10_simulate.sh
+# Recommended: 2 cpus, 64GB memory
+./10_simulate.bash
 
-sh 20_download_barnyard_data.sh
+# Recommended: 2 cpus, 4GB memory
+./20_download_barnyard_data.bash
+# Recommended: 8 cpus, 32GB memory
 Rscript 21_process_barnyard_data.R
 
-bash 30_assign_guides.bash
+# Recommended: 2 cpus, 16GB memory.
+#
+# Running these in sequence may take a long time (days).  Consider
+# running each of these in a separate screen/tmux pane in parallel
+./31_nextflow_run_test.bash
+./32_nextflow_run_numCells2000_medUmi100_snr4_endo75_varyNumGuides.bash
+./33_nextflow_run_numCells2000_medUmi20_snr1_endo25_varyNumGuides.bash
+./34_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides.bash
+./35_nextflow_run_numCells20k_medUmi20_snr1_endo25_varyNumGuides.bash
+./36_nextflow_run_numCells2000_numGuides100_varyMOI.bash
+./37_nextflow_run_cleanser_barnyard_data.bash
 
-Rscript 41_plot_simulation_results.R
-Rscript 42_plot_barnyard_results.R
+# Recommended: 4 cpus, 16GB memory.
+Rscript 61_plot_simulation_results.R
+Rscript 62_plot_barnyard_results.R
