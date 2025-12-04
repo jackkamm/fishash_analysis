@@ -20,9 +20,9 @@ conda install python=3.11 r \
       bioconductor-singlecellexperiment \
       cmdstanpy=1.2 muon=0.1.7
 
-# FIXME: Rather than installing uv within the conda install, it may be
-# better to just install uv outside the env and then install geomux
-# thru that
+# FIXME: Rather than installing uv within the conda install, it's
+# probably better to just install uv outside the env and then install
+# geomux thru that. Or to use pip to install geomux within the conda env?
 
 pip install pegasusio demuxem
 
