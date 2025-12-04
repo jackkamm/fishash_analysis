@@ -1,0 +1,7 @@
+worktree
+.nextflow
+.nextflow.log
+.nextflow.log.*
+
+/outs
+/nextflow_rundirs
