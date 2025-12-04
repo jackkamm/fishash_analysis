@@ -1,5 +1,7 @@
 source env_vars.sh
 
+GUIDEBENDER_SIM_DIR="$GUIDEBENDER_OUT_DIR/simulations"
+
 # small test scenario to make sure things run
 Rscript simulate/simulate_test.R $GUIDEBENDER_SIM_DIR/test
 

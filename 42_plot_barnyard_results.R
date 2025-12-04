@@ -3,7 +3,9 @@ library(ggplot2)
 
 library(SummarizedExperiment)
 
-out_dir <- "outs"
+source("env_vars.sh")
+
+out_dir <- GUIDEBENDER_OUT_DIR
 plot_dir <- file.path(out_dir, "plots")
 dir.create(plot_dir)
 

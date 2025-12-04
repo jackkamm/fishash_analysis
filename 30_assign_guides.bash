@@ -1,13 +1,15 @@
 source env_vars.sh
 
+GUIDEBENDER_OUT_DIR=$(pwd -P $GUIDEBENDER_OUT_DIR)
+
+GUIDEBENDER_RES_DIR="$GUIDEBENDER_OUT_DIR/results"
+GUIDEBENDER_SIM_DIR="$GUIDEBENDER_OUT_DIR/simulations"
+
 mkdir -p $GUIDEBENDER_RES_DIR
 
 # we'll run each nextflow job from a separate subfolder so we can
 # manually run them in parallel if we want to
 mkdir -p nextflow_rundirs
-
-GUIDEBENDER_SIM_DIR=$(pwd -P $GUIDEBENDER_SIM_DIR)
-GUIDEBENDER_RES_DIR=$(pwd -P $GUIDEBENDER_RES_DIR)
 
 # test run
 cd nextflow_rundirs
@@ -15,7 +17,7 @@ mkdir -p test
 cd test
 nextflow ../../main.nf \
          -resume \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --sample_sheet $GUIDEBENDER_SIM_DIR/test/sample_sheet.csv \
          --outdir $GUIDEBENDER_RES_DIR/test
 cd ../..
@@ -26,7 +28,7 @@ mkdir -p vary_nguides_2k_high_expr
 cd vary_nguides_2k_high_expr
 nextflow ../../main.nf \
          -resume \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --sample_sheet $GUIDEBENDER_SIM_DIR/numCells2000_medUmi100_snr4_endo75_varyNumGuides/sample_sheet.csv \
          --outdir $GUIDEBENDER_RES_DIR/numCells2000_medUmi100_snr4_endo75_varyNumGuides
 cd ../..
@@ -37,7 +39,7 @@ cd nextflow_rundirs
 mkdir -p vary_nguides_2k_low_expr
 cd vary_nguides_2k_low_expr
 nextflow ../../main.nf \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --sample_sheet $GUIDEBENDER_SIM_DIR/numCells2000_medUmi20_snr1_endo25_varyNumGuides/sample_sheet.csv \
          --outdir $GUIDEBENDER_RES_DIR/numCells2000_medUmi20_snr1_endo25_varyNumGuides
 cd ../..
@@ -49,7 +51,7 @@ mkdir -p vary_nguides_20k_high_expr
 cd vary_nguides_20k_high_expr
 nextflow ../../main.nf \
          -resume \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --demuxemMemFactor 4 \
          --maxMemFactor 2 \
          --skipCrispatBig \
@@ -64,7 +66,7 @@ cd nextflow_rundirs
 mkdir -p vary_nguides_20k_low_expr
 cd vary_nguides_20k_low_expr
 nextflow ../../main.nf \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --maxMemFactor 2 \
          --skipCrispatBig \
          --skipCleanser \
@@ -78,7 +80,7 @@ mkdir -p vary_moi_2k
 cd vary_moi_2k
 nextflow ../../main.nf \
          -resume \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --sample_sheet $GUIDEBENDER_SIM_DIR/numCells2000_numGuides100_varyMOI/sample_sheet.csv \
          --outdir $GUIDEBENDER_RES_DIR/numCells2000_numGuides100_varyMOI
 cd ../..
@@ -87,11 +89,12 @@ cd ../..
 #
 # NOTE: A fake ground-truth was created so that the simulation
 # pipeline would run to completion (as the nextflow pipeline computes
-# the accuracy at the end). In particular, all entries with >0 counts
-# were labeled as being truly present.These accuracy metrics should be
-# ignored as it is just a hack to run the pipeline!  Instead, extract
-# the full results and manually compare them to the true species after
-# running this (this is done in 40_analysis.R).
+# the accuracy at the end assuming a known ground truth). In
+# particular, all entries with >0 counts were labeled as being truly
+# present. These accuracy metrics should be ignored as it is just a
+# hack to run the pipeline!  Instead, extract the full results and
+# manually compare them to the true species after running this (this
+# is done in 42_plot_barnyard_results.R).
 #
 # (TODO: refactor the pipeline so it can be run without requiring
 # ground truth and computing accuracy metrics)
@@ -100,7 +103,7 @@ mkdir -p barnyard
 cd barnyard
 nextflow ../../main.nf \
          -resume \
-         -profile slurm \
+         -profile $NX_PROFILE \
          --sample_sheet $GUIDEBENDER_SIM_DIR/cleanser_barnyard_data/sample_sheet.csv \
          --outdir $GUIDEBENDER_RES_DIR/cleanser_barnyard_data
 cd ../..
