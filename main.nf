@@ -99,7 +99,7 @@ process run_demuxem {
 }
 
 process run_cleanser {
-    label "crispat_big"
+    label "cleanser"
     tag "seqtech=${seqtech},simlab=${sim_label}"
 
     input:

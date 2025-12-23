@@ -7,30 +7,31 @@ if (!dir.exists(out_dir)) {
     dir.create(out_dir)
 }
 
-seed <- 95213030
+seed <- (202512231439 %% (2^31-1))
 ntimes <- 10
 
 set.seed(seed)
 
 meta_df <- expand.grid(
     iter=1:ntimes,
-    nguides=c(20, 100, 500, 1000, 2000, 4000)
+    moi=c(.1, .3, .5, 1, 2, 3, 5, 10)
 )
 
 meta_df %<>%
-    dplyr::mutate(sim_label=sprintf("nguides_%d_iter_%d", nguides, iter)) %>%
+    dplyr::mutate(sim_label=sprintf("moi_%f_iter_%d", moi, iter)) %>%
     dplyr::mutate(path=file.path(out_dir, paste0(sim_label, ".Rds")))
 
 for (i in 1:nrow(meta_df)) {
     saveRDS(
-        simulate_guidebender2(
-            n_guides=meta_df$nguides[i],
-            n_cells=2000,
-            moi=.3,
+        simulate_guidebender(
+            n_guides=100,
+            n_cells=20000,
+            moi=meta_df$moi[i],
             hurdle_prob=.1,
-            snr=4,
-            count_per_cell=100,
-            frac_noise_endo=.75,
+            d_mu_cell=log(100),
+            d_mu_drop=log(20),
+            d_sigma_drop=.25, d_sigma_cell=.25, d_sigma_guide=.25,
+            rho_alpha=5, rho_beta=45,
             return_sparse_only=TRUE
         ),
         meta_df$path[i]

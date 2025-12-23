@@ -1,4 +1,20 @@
 
+method_levels <- c(
+    'cleanser_cs',
+    'cleanser_dc',
+    'crispat_gauss',
+    'crispat_poisgauss',
+    'crispat_poisson',
+    'crispat_negbinom',
+    'sceptre_mixture',
+    'demuxem',
+    'geomux',
+    'fishash'
+)
+
+method_colors <- pals::brewer.paired(10)
+names(method_colors) <- method_levels
+
 ## Some helper functions
 
 f1_score <- function(precision, recall) {
@@ -111,6 +127,9 @@ subset_methods <- function(df) {
                 method=='cleanser_dc_0.95' ~ 'cleanser_dc',
                 TRUE ~ method
             )
+        ) %>%
+        dplyr::mutate(
+            method=factor(method, method_levels)
         )
 }
 
@@ -124,10 +143,16 @@ get_long_subset_df <- function(df) {
         subset_methods()
 }
 
+mem_string_to_gb <- function(mem_str) {
+    unit <- c(GB=1, MB=1/1024)
+    matched <- stringr::str_match(mem_str, "(.*) (.*)")
+    as.numeric(matched[,2]) * unit[matched[,3]]
+}
+
 # for extracting trace report and plot timings
 clean_trace_df <- function(df_trace) {
     df_trace %>%
-        dplyr::filter(status == 'COMPLETED') %>%
+        dplyr::filter(status %in% c('COMPLETED', 'CACHED')) %>%
         dplyr::filter(startsWith(method, 'run_')) %>%
         dplyr::mutate(sim_label=stringr::str_match(tag, '.*simlab=(.*)')[,2]) %>%
         dplyr::mutate(method=stringr::str_match(method, 'run_(.*)')[,2]) %>%
@@ -155,6 +180,9 @@ clean_trace_df <- function(df_trace) {
             lubridate::seconds(lubridate::as.period(toupper(realtime))),
             "(.*)S"
         )[,2])) %>%
-        dplyr::mutate(minutes=seconds / 60) ->
-        df_trace_sub
+        dplyr::mutate(minutes=seconds / 60) %>%
+        dplyr::mutate(
+            peak_rss_gb = mem_string_to_gb(peak_rss),
+            peak_vmem_gb = mem_string_to_gb(peak_vmem)
+        )
 }

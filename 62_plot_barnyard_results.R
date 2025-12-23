@@ -266,11 +266,13 @@ pdf(file.path(plot_dir, "barnyard_accuracy_barplot.pdf"))
 bin_metrics_origqc %>%
     subset_methods() %>%
     dplyr::filter(!(species_mix %in% c('homo', 'mus'))) %>%
-    ggplot(aes(x=method, y=Accuracy)) +
+    ggplot(aes(x=method, y=Accuracy, fill=method)) +
     geom_col() +
+    scale_fill_manual(values=method_colors) +
     facet_grid(seq_tech~species_mix) +
     theme_bw(base_size=16) +
-    theme(axis.text.x=element_text(angle=45, hjust=1))
+    theme(axis.text.x=element_text(angle=45, hjust=1),
+          legend.position='none')
 dev.off()
 
 

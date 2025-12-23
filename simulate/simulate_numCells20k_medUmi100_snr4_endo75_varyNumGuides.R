@@ -44,3 +44,19 @@ meta_df %>%
         file.path(out_dir, "sample_sheet.csv"),
         row.names=F, quote=F
     )
+
+meta_df %>%
+    dplyr::filter(nguides <= 20000) %>%
+    dplyr::select(sim_label, path) %>%
+    write.csv(
+        file.path(out_dir, "sample_sheet_leq20k.csv"),
+        row.names=F, quote=F
+    )
+
+meta_df %>%
+    dplyr::filter(nguides == 80000) %>%
+    dplyr::select(sim_label, path) %>%
+    write.csv(
+        file.path(out_dir, "sample_sheet_80k.csv"),
+        row.names=F, quote=F
+    )

@@ -5,13 +5,33 @@ set -euxo pipefail
 
     source include/nextflow_run_common.sh
 
-    # NOTE: do NOT use -resume, as we use this run for timing.
+    mkdir -p $OUTS/results/$RUN_NAME
+
+    # 20-20k guide scenarios
+
     nextflow ../../main.nf \
+             -resume \
              -work-dir $NXF_WORKDIR/$RUN_NAME \
              -profile $NXF_PROFILE \
+             --crispatBigMemFactor 2 \
+             --cleanserMemFactor 4 \
+             --demuxemMemFactor 4 \
              --maxMemFactor 2 \
+             --sample_sheet $OUTS/simulations/$RUN_NAME/sample_sheet_leq20k.csv \
+             --outdir $OUTS/results/$RUN_NAME/leq20k
+
+    # big 80k guide scenario
+    #
+    # skip crispat big models due to their long running time.
+
+    nextflow ../../main.nf \
+             -resume \
+             -work-dir $NXF_WORKDIR/$RUN_NAME \
+             -profile $NXF_PROFILE \
              --skipCrispatBig \
-             --skipCleanser \
-             --sample_sheet $OUTS/simulations/$RUN_NAME/sample_sheet.csv \
-             --outdir $OUTS/results/$RUN_NAME
+             --cleanserMemFactor 4 \
+             --demuxemMemFactor 4 \
+             --maxMemFactor 2 \
+             --sample_sheet $OUTS/simulations/$RUN_NAME/sample_sheet_80k.csv \
+             --outdir $OUTS/results/$RUN_NAME/80k
 }

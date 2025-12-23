@@ -12,11 +12,9 @@ Rscript 21_process_barnyard_data.R
 # Running these in sequence may take a long time (days).  Consider
 # running each of these in a separate screen/tmux pane in parallel
 ./31_nextflow_run_test.bash
-./32_nextflow_run_numCells2000_medUmi100_snr4_endo75_varyNumGuides.bash
-./33_nextflow_run_numCells2000_medUmi20_snr1_endo25_varyNumGuides.bash
 ./34_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides.bash
 ./35_nextflow_run_numCells20k_medUmi20_snr1_endo25_varyNumGuides.bash
-./36_nextflow_run_numCells2000_numGuides100_varyMOI.bash
+./36_nextflow_run_numCells20k_numGuides100_varyMOI.bash
 ./37_nextflow_run_cleanser_barnyard_data.bash
 
 # Recommended: 4 cpus, 16GB memory.
