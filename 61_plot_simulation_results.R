@@ -279,6 +279,18 @@ df_trace_sub %>%
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
 dev.off()
 
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_minutes_log.pdf"), width=10, height=5)
+df_trace_sub %>%
+    ggplot(aes(x=method, y=minutes, color=method)) +
+    geom_boxplot() +
+    scale_y_log10() +
+    coord_flip() +
+    facet_grid(regime~nguides, labeller='label_both') +
+    scale_color_manual(values=method_colors) +
+    theme_bw(base_size=16) +
+    theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
+dev.off()
+
 pdf(file.path(plot_dir, "numCells20k_varyNumGuides_subset_seconds.pdf"), width=10, height=5)
 df_trace_sub %>%
     dplyr::filter(
@@ -307,6 +319,18 @@ df_trace_sub %>%
     geom_boxplot() +
     coord_flip() +
     facet_grid(regime~nguides, scales='free_x', labeller='label_both') +
+    scale_color_manual(values=method_colors) +
+    theme_bw(base_size=16) +
+    theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
+dev.off()
+
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_subset_peakrss_log.pdf"), width=10, height=5)
+df_trace_sub %>%
+    ggplot(aes(x=method, y=peak_rss_gb, color=method)) +
+    geom_boxplot() +
+    coord_flip() +
+    scale_y_log10() +
+    facet_grid(regime~nguides, labeller='label_both') +
     scale_color_manual(values=method_colors) +
     theme_bw(base_size=16) +
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
