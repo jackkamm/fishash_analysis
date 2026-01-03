@@ -27,9 +27,11 @@ set -euxo pipefail
              -resume \
              -work-dir $NXF_WORKDIR/$RUN_NAME \
              -profile $NXF_PROFILE \
-             --skipCrispatBig \
+             --skipCrispatPoisson \
+             --skipCrispatNegBinom \
              --cleanserMemFactor 8 \
              --demuxemMemFactor 4 \
+             --crispatBigMemFactor 4 \
              --maxMemFactor 2 \
              --sample_sheet $OUTS/simulations/$RUN_NAME/sample_sheet_80k.csv \
              --outdir $OUTS/results/$RUN_NAME/80k

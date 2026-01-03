@@ -421,20 +421,22 @@ workflow {
     run_crispat_gauss(adata_ch)
     crispat_out = run_crispat_gauss.out
 
-    if (!params.skipCrispatBig) {
-        run_crispat_poisgauss(adata_ch)
+    run_crispat_poisgauss(adata_ch)
+    crispat_out = crispat_out.mix(run_crispat_poisgauss.out)
 
-        // NOTE: the dask workers sometimes give timeout errors. It helps
-        // to run the pipeline with retries. Possibly should modify the
-        // timeout params within the crispat implementations to avoid this
+    // NOTE: A difficulty with crispat is that sometimes the dask
+    // workers give timeout errors. It helps to run the pipeline with
+    // retries. Possibly should modify the timeout params within the
+    // crispat implementations to avoid this
+
+    if (!params.skipCrispatPoisson) {
         run_crispat_poisson(adata_ch)
-        run_crispat_negbinom(adata_ch)
+        crispat_out = crispat_out.mix(run_crispat_poisson.out)
+    }
 
-        crispat_out = crispat_out.mix(
-            run_crispat_poisgauss.out,
-            run_crispat_poisson.out,
-            run_crispat_negbinom.out
-        )
+    if (!params.skipCrispatNegBinom) {
+        run_crispat_negbinom(adata_ch)
+        crispat_out = crispat_out.mix(run_crispat_negbinom.out)
     }
 
     convert_crispat(crispat_out)
