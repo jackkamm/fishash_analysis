@@ -94,6 +94,11 @@ parse_simlab_varyNumGuides <- function(simlab) {
     matched
 }
 
+parse_simlab_varySignalNoiseCorr <- function(simlab) {
+    matched <- stringr::str_match(simlab, 'corr_([^_]*)_')
+    factor(matched[,2], levels=c('low', 'mid', 'high'))
+}
+
 # A few of the methods we ran with varying parameters, but we
 # typically just pick one version for presentation. Namely:
 #

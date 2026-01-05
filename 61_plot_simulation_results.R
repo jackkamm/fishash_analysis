@@ -346,3 +346,86 @@ df_trace_sub %>%
     theme_bw(base_size=16) +
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
 dev.off()
+
+### Plots for varying correlation scenario
+
+prefix <- file.path(
+    OUTS,
+    "results",
+    "numCells20k_varySignalNoiseCorr"
+)
+
+df_prec_recall <- read.csv(file.path(
+    prefix,
+    "combined_confusion.csv"
+))
+
+
+df_prec_recall %<>% dplyr::mutate(F1=f1_score(Precision, Recall))
+
+df_prec_recall %<>%
+    dplyr::mutate(corr=parse_simlab_varySignalNoiseCorr(sim_label))
+
+df_prec_recall %>%
+    dplyr::filter(method %in% c('fishash_refit0', 'fishash_refit10')) %>%
+    dplyr::mutate(
+        simpson_correction=method != 'fishash_refit0'
+    ) %>%
+    dplyr::filter(subset=='full') %>%
+    dplyr::group_by(corr, simpson_correction) %>%
+    dplyr::summarize(F1=median(F1), .groups='drop') %>%
+    write.csv(file.path(plot_dir, 'numCells20k_varySignalNoiseCorr_compareSimpson_medF1.csv'), row.names=F)
+
+pdf(file.path(plot_dir, "numCells20k_varySignalNoiseCorr_compareSimpson_f1_boxplot.pdf"), width=9, height=3)
+df_prec_recall %>%
+    dplyr::filter(method %in% c('fishash_refit0', 'fishash_refit10')) %>%
+    dplyr::mutate(
+        simpson_correction=method != 'fishash_refit0'
+    ) %>%
+    dplyr::filter(subset=='full') %>%
+    ggplot(aes(x=simpson_correction, y=F1, color=simpson_correction)) +
+    geom_boxplot() +
+    facet_wrap(~corr, labeller='label_both') +
+    theme_bw(base_size=16) +
+    theme(legend.position='none')
+dev.off()
+
+pdf(file.path(plot_dir, "numCells20k_varySignalNoiseCorr_compareSimpson_prec_recall.pdf"), width=9, height=4)
+df_prec_recall %>%
+    dplyr::filter(method %in% c('fishash_refit0', 'fishash_refit10')) %>%
+    dplyr::mutate(
+        simpson_correction=method != 'fishash_refit0'
+    ) %>%
+    dplyr::filter(subset=='full') %>%
+    ggplot(aes(color=simpson_correction, x=Recall, y=Precision)) +
+    geom_point(shape=1) +
+    geom_hline(yintercept=.95, lty='dotted') +
+    facet_wrap(~corr, labeller='label_both') +
+    theme_bw(base_size=16) +
+    theme(legend.position='bottom')
+dev.off()
+
+
+# load the full counts
+rep_list <- readRDS(
+    file.path(prefix, "combined_results.Rds")
+)
+
+df_guide_abund <- get_dataframe_guide_abund(rep_list)
+
+df_guide_abund %<>% dplyr::mutate(
+    corr=parse_simlab_varySignalNoiseCorr(sim_label)
+)
+
+pdf(file.path(plot_dir, "numCells20k_varySignalNoiseCorr_compareSimpson_signalNoiseAbund.pdf"), width=9, height=3)
+df_guide_abund %>%
+    dplyr::rename(signal_freq=frac_fg, noise_freq=frac_bg) %>%
+    ggplot(aes(x=noise_freq, y=signal_freq)) +
+    geom_point(shape=1, alpha=.5) +
+    geom_abline(color='red', lty='dotted') +
+    #geom_smooth() +
+    scale_x_log10() +
+    scale_y_log10() +
+    facet_wrap(~corr, labeller='label_both') +
+    theme_bw(base_size=16)
+dev.off()

@@ -23,4 +23,9 @@ set -euxo pipefail
     Rscript \
         simulate/simulate_numCells20k_numGuides100_varyMOI.R \
         $OUTS/simulations/numCells20k_numGuides100_varyMOI
+
+    # varying signal-noise correlation
+    Rscript \
+        simulate/simulate_numCells20k_varySignalNoiseCorr.R \
+        $OUTS/simulations/numCells20k_varySignalNoiseCorr
 }
