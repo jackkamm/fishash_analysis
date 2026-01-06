@@ -134,7 +134,7 @@ df_prec_recall %>%
 fname <- file.path(
     OUTS,
     "results",
-    "numCells20k_numGuides100_varyMOI",
+    "numCells20k_numGuides200_varyMOI",
     "combined_confusion.csv"
 )
 
@@ -154,7 +154,7 @@ df_prec_recall$replicate <- as.integer(matched[,'replicate'])
 df_prec_recall %<>%
     subset_methods()
 
-pdf(file.path(plot_dir, "numCells20k_numGuides100_varyMOI_precrecall.pdf"), width=14, height=7)
+pdf(file.path(plot_dir, "numCells20k_numGuides200_varyMOI_precrecall.pdf"), width=14, height=7)
 set.seed(12345) # for shuffling the data point order
 df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
@@ -173,7 +173,7 @@ df_prec_recall %>%
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='bottom')
 dev.off()
 
-pdf(file.path(plot_dir, "numCells20k_numGuides100_varyMOI_f1.pdf"), width=14, height=7)
+pdf(file.path(plot_dir, "numCells20k_numGuides200_varyMOI_f1.pdf"), width=14, height=7)
 df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
     ggplot(aes(x=method, y=F1, color=method)) +
@@ -195,12 +195,12 @@ df_prec_recall %>%
     dplyr::ungroup() %>%
     dplyr::filter(rank==1) %>%
     write.csv(
-        file.path(plot_dir, "numCells20k_numGuides100_varyMOI_top_per_scenario.csv"),
+        file.path(plot_dir, "numCells20k_numGuides200_varyMOI_top_per_scenario.csv"),
         row.names=F
     )
 
 
-## Plot runtime of 20k cells low-grna vary-nguides scenario
+## Plot runtime of 20k cells vary-nguides scenario
 
 df_trace <- rbind(
     read.table(

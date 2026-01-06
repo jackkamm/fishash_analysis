@@ -14,7 +14,7 @@ Rscript 21_process_barnyard_data.R
 ./31_nextflow_run_test.bash
 ./34_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides.bash
 ./35_nextflow_run_numCells20k_medUmi20_snr1_endo25_varyNumGuides.bash
-./36_nextflow_run_numCells20k_numGuides100_varyMOI.bash
+./36_nextflow_run_numCells20k_numGuides200_varyMOI.bash
 ./37_nextflow_run_cleanser_barnyard_data.bash
 ./38_nextflow_run_numCells20k_varySignalNoiseCorr.bash
 

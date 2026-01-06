@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 {
-    RUN_NAME="numCells20k_numGuides100_varyMOI"
+    RUN_NAME="numCells20k_numGuides200_varyMOI"
 
     source include/nextflow_run_common.sh
 
@@ -11,6 +11,7 @@ set -euxo pipefail
              -profile $NXF_PROFILE \
              --maxMemFactor 2 \
              --crispatBigMemFactor 2 \
+             --cleanserMemFactor 4 \
              --sample_sheet $OUTS/simulations/$RUN_NAME/sample_sheet.csv \
              --outdir $OUTS/results/$RUN_NAME
 }

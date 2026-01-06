@@ -7,7 +7,8 @@ if (!dir.exists(out_dir)) {
     dir.create(out_dir)
 }
 
-seed <- (202512231439 %% (2^31-1))
+# seed with ISO8601 datetime at script creation
+seed <- (202601060721 %% (2^31-1))
 ntimes <- 10
 
 set.seed(seed)
@@ -23,16 +24,16 @@ meta_df %<>%
 
 for (i in 1:nrow(meta_df)) {
     saveRDS(
-        simulate_guidebender(
-            n_guides=100,
+        simulate_guidebender2(
+            n_guides=200,
             n_cells=20000,
             moi=meta_df$moi[i],
             hurdle_prob=.1,
-            d_mu_cell=log(100),
-            d_mu_drop=log(20),
-            d_sigma_drop=.25, d_sigma_cell=.25, d_sigma_guide=.25,
-            rho_alpha=5, rho_beta=45,
-            return_sparse_only=TRUE
+            snr=4,
+            count_per_cell=100,
+            frac_noise_endo=.75,
+            return_sparse_only=TRUE,
+            chunk_cells=1000
         ),
         meta_df$path[i]
     )
