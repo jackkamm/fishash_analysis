@@ -28,7 +28,11 @@ After satisfying the prerequisites, do the following:
    ```
    conda activate fishash_analysis
    ```
-4. Run each of the numbered scripts in turn.
+4. If using slurm, you may need to edit the parameters
+   `slurmClusterOptionsDefault` and `slurmClusterOptionsLong` in
+   `nextflow.config` to set the options appropriate for your HPC Slurm
+   system (such as queue, qos, etc).
+5. Run each of the numbered scripts in turn.
    * Alternatively, run them all in a single script with `run_all.sh`
    * On a shared HPC environment, it may be preferable to manually run
      each script in turn (rather than directly using `run_all.sh`),
