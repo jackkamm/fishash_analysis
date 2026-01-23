@@ -1,4 +1,6 @@
 
+This repo is to reproduce the results in our [fishash manuscript](https://www.biorxiv.org/content/10.64898/2026.01.22.701179).
+
 Prerequisites:
 * Nextflow
 * Conda, configured to install from conda-forge and bioconda repos
