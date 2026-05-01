@@ -21,12 +21,9 @@ se_dual <- readRDS(in_rds)
 
 # As our initial ground truth, we will say that the KO is truly
 # present if each of its 2 guides has >= 1 read. The logic is that it
-# is highly unlikely to sample both guides by chance in a single
-# cell. Note there might be some problems with this if there are
-# outlier cells with massive number of gRNA UMIs, or if a batch has a
-# particular guide-pair to be widely contaminating -- however, to
-# start, we will just run on everything with this imperfect ground
-# truth, and then perform additional filtering downstream if needed.
+# is highly unlikely to sample both guides by chance in a single cell
+# -- as there are ~20k guides, and the median cell has ~9 guides with
+# nonzero reads.
 assay(se_dual, 'both_nonzero') <- (
     (assay(se_dual, 'posA_counts') > 0) & (assay(se_dual, 'posB_counts') > 0)
 )
