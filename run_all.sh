@@ -18,6 +18,8 @@ Rscript 21_process_barnyard_data.R
 ./37_nextflow_run_cleanser_barnyard_data.bash
 ./38_nextflow_run_numCells20k_varySignalNoiseCorr.bash
 
+./39_nextflow_run_replogle2022.bash
+
 # Recommended: 4 cpus, 16GB memory.
 Rscript 61_plot_simulation_results.R
 Rscript 62_plot_barnyard_results.R
