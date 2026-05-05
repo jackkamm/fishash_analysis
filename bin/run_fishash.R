@@ -29,26 +29,12 @@ parser$add_argument(
     type = "integer",
     help="Number of times to refit the model"
 )
-parser$add_argument(
-    "--bg_mat",
-    required=FALSE,
-    default=NULL,
-    type="character",
-    help="Matrix of estimated background reads estimated by demuxEminem"
-)
 args <- parser$parse_args()
-
-if (!is.null(args$bg_mat)) {
-    background <- t(readMM(args$bg_mat))
-} else {
-    background <- NULL
-}
 
 writeMM(
     assay(
         fishash(assay(readRDS(args$in_rds), "counts"),
                 refit=args$refit,
-                background=background,
                 exclude_empty=TRUE),
         'assigned'
     ),

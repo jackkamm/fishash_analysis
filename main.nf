@@ -55,28 +55,6 @@ process run_fishash {
     """
 }
 
-process run_demuxFish {
-    label "fishash"
-    tag "simlab=${sim_label}"
-
-    input:
-    tuple val(sim_label), val(demuxFish_label), path(sim_rds), path(bg_mtx)
-
-    output:
-    tuple(val(sim_label),
-          val(demuxFish_label),
-          path(sim_rds),
-          path("out.mtx"))
-
-    script:
-    """
-    run_fishash.R \
-        --in_rds $sim_rds \
-        --bg_mat $bg_mtx \
-        --out_mtx out.mtx
-    """
-}
-
 process run_demuxem {
     label "demuxem"
     tag "minsignal=${min_signal},simlab=${sim_label}"
