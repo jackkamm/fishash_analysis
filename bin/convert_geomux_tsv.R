@@ -45,7 +45,7 @@ geomux_res %>%
     apply(1, function(x) cbind(
         unlist(stringr::str_split(x['guide_ids_original'], '\\|')),
         x['cell_id']
-    )) %>%
+    ), simplify=FALSE) %>%
     do.call(what=rbind) %>%
     apply(2, as.integer) %>%
     `colnames<-`(c('guide_idx0', 'cell_idx0')) %>%

@@ -23,13 +23,19 @@ combined_confusion %>%
     tidyr::pivot_wider(names_from=subset, values_from=Freq) %>%
     {stopifnot(.$full >= .$nonzero)}
 
-# no reasonable method should ever assign a zero
-combined_confusion %>%
-    dplyr::select(sim_label, method, subset, TP, FP) %>%
-    tidyr::pivot_longer(c(TP, FP),
-                        names_to="type", values_to="Freq") %>%
-    tidyr::pivot_wider(names_from=subset, values_from=Freq) %>%
-    {stopifnot(.$full == .$nonzero)}
+## no reasonable method should ever assign a zero
+#combined_confusion %>%
+#    dplyr::select(sim_label, method, subset, TP, FP) %>%
+#    tidyr::pivot_longer(c(TP, FP),
+#                        names_to="type", values_to="Freq") %>%
+#    tidyr::pivot_wider(names_from=subset, values_from=Freq) %>%
+#    {stopifnot(.$full == .$nonzero)}
+
+# NOTE: Actually, it turns out the Bayesian methods can assign zeros
+# if the posterior threshold is set low enough. So commented out the
+# assertion above; may want to account for this when plotting the
+# varying-precision runs for the revision (where the posterior
+# threshold can get low)
 
 write.csv(combined_confusion, sprintf("%s_confusion.csv", out_prefix),
           row.names=F)
