@@ -4,6 +4,7 @@ This repo is to reproduce the results in our [fishash manuscript](https://www.bi
 Prerequisites:
 * Nextflow
 * Conda, configured to install from conda-forge and bioconda repos
+* uv (to install/run geomux)
 * Slurm, needed to run the nextflow jobs
   * Alternatively, edit [include/env_vars.sh](include/env_vars.sh) and set
     `NXF_PROFILE="local"` to configure Nextflow to run all jobs locally
