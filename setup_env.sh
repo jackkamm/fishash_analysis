@@ -5,6 +5,9 @@ conda activate fishash_analysis
 # splatter: for sceptre workaround
 # cmdstanpy, muon: specific versions needed for cleanser
 conda install python=3.11 r \
+      numpy=2.3 \
+      scipy=1.16 \
+      pandas=2.3 \
       r-devtools \
       r-tidyverse \
       r-extradistr \
@@ -40,6 +43,6 @@ Rscript -e 'devtools::install_github("katsevich-lab/sceptre", upgrade=FALSE)'
 # FIXME: install geomux via pip to remove uv dependency and have better isolation
 uv tool install geomux
 
-conda env export > environment.yaml
+#conda env export > environment.yaml
 
 conda deactivate
