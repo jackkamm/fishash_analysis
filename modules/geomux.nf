@@ -1,14 +1,15 @@
 process run_geomux {
     label "fishash"
-    tag "minumi=${min_umi},simlab=${sim_label}"
+    tag "minumi=${min_umi},simlab=${sim_label},fdr=${fdr_threshold}"
 
     input:
     tuple val(sim_label), path(sim_rds), path(sim_h5ad)
     each min_umi
+    each fdr_threshold
 
     output:
     tuple(val(sim_label),
-          val("geomux_minumi${min_umi}"),
+          val("geomux_minumi${min_umi}_fdr${fdr_threshold}"),
           path(sim_rds),
           path("geomux_out.tsv"))
 
@@ -17,6 +18,7 @@ process run_geomux {
     geomux \
         $sim_h5ad \
         geomux_out.tsv \
+        --fdr-threshold $fdr_threshold \
         --min-umi-cells ${min_umi} \
         --min-umi-guides ${min_umi}
     """

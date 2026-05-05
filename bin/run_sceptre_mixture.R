@@ -38,6 +38,13 @@ parser$add_argument(
     type = "integer",
     help="Number of cpus for parallelization"
 )
+parser$add_argument(
+    "--probability_threshold",
+    required = FALSE,
+    type="double",
+    default=0.8,
+    help="Posterior probability cutoff"
+)
 args <- parser$parse_args()
 
 set.seed(abs(digest2int(paste0("run_sceptre_mixture.R", "_", args$in_rds))))
@@ -64,16 +71,18 @@ sceptobj %<>% set_analysis_parameters()
 
 if (args$cpus == 1) {
     sceptobj %<>% assign_grnas(method="mixture",
+                               probability_threshold=args$probability_threshold,
                                parallel=FALSE)
 } else {
     sceptobj %<>% assign_grnas(method="mixture",
+                               probability_threshold=args$probability_threshold,
                                parallel=TRUE,
                                n_processors=args$cpus)
 }
 
 
 assignments_sceptre <- get_grna_assignments(
-    sceptre_object = sceptobj
+    sceptre_object = sceptobj,
 )[rownames(guide_counts),]
 
 colnames(assignments_sceptre) <- colnames(guide_counts)

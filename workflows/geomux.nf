@@ -4,9 +4,10 @@ workflow GEOMUX {
     take:
     adata_ch
     min_umi_list
+    padj_list
 
     main:
-    run_geomux(adata_ch, min_umi_list)
+    run_geomux(adata_ch, min_umi_list, padj_list)
     convert_geomux(run_geomux.out)
 
     emit:

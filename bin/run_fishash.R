@@ -4,9 +4,6 @@ library(fishash)
 library(Matrix)
 library(SummarizedExperiment)
 
-# Update comment below to force fishash reruns:
-# 2025-11-02: currently on fishash commit: bd68f33
-
 parser <- ArgumentParser(description = "Run fishash")
 parser$add_argument(
     "--in_rds",
@@ -29,12 +26,20 @@ parser$add_argument(
     type = "integer",
     help="Number of times to refit the model"
 )
+parser$add_argument(
+    "--padj_cutoff",
+    required = FALSE,
+    type="double",
+    default=0.05,
+    help="FDR cutoff"
+)
 args <- parser$parse_args()
 
 writeMM(
     assay(
         fishash(assay(readRDS(args$in_rds), "counts"),
                 refit=args$refit,
+                padj_cutoff=args$padj_cutoff,
                 exclude_empty=TRUE),
         'assigned'
     ),

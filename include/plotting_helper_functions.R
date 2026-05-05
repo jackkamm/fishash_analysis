@@ -112,24 +112,32 @@ parse_simlab_varySignalNoiseCorr <- function(simlab) {
 subset_methods <- function(df) {
     df %>%
         dplyr::filter(method %in% c(
-            'fishash_refit10',
+            'fishash_refit10_padj0.05',
             'demuxem_signal2',
             'crispat_poisson',
             'crispat_negbinom',
             'crispat_poisgauss',
             'crispat_gauss',
-            'sceptre_mixture',
+            'sceptre_mixture_prob0.8',
             'cleanser_cs_0.95',
             'cleanser_dc_0.95',
+            'geomux_minumi5_fdr0.05',
+            # tag names from older versions of the pipeline
+            'fishash_refit10',
+            'sceptre_mixture',
             'geomux_minumi5'
         )) %>%
         dplyr::mutate(
             method=dplyr::case_when(
-                method=="fishash_refit10" ~ "fishash",
+                method=="fishash_refit10_padj0.05" ~ "fishash",
+                method=='sceptre_mixture_prob0.8' ~'sceptre_mixture',
                 method=="demuxem_signal2" ~ "demuxem",
-                method=='geomux_minumi5' ~ 'geomux',
+                method=='geomux_minumi5_fdr0.05' ~ 'geomux',
                 method=='cleanser_cs_0.95' ~ 'cleanser_cs',
                 method=='cleanser_dc_0.95' ~ 'cleanser_dc',
+                # alternate tag names from older versions of pipeline
+                method=="fishash_refit10" ~ "fishash",
+                method=='geomux_minumi5' ~ 'geomux',
                 TRUE ~ method
             )
         ) %>%

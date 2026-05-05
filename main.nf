@@ -13,18 +13,18 @@ workflow {
 
     out_ch = channel.empty()
 
-    FISHASH(sims_ch, [0, 10])
+    FISHASH(sims_ch, [0, 10], [0.05])
     out_ch = out_ch.mix(FISHASH.out.out)
 
     if (!params.skipSceptre) {
-        SCEPTRE(sims_ch)
+        SCEPTRE(sims_ch, [0.8])
         out_ch = out_ch.mix(SCEPTRE.out.out)
     }
 
     convert_anndata(sims_ch)
     adata_ch = convert_anndata.out
 
-    GEOMUX(adata_ch, [1, 5])
+    GEOMUX(adata_ch, [1, 5], [0.05])
     out_ch = out_ch.mix(GEOMUX.out.out)
 
     DEMUXEM(adata_ch, [2, 10])
