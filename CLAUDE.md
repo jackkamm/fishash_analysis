@@ -53,6 +53,21 @@ Execution profile is controlled by `NXF_PROFILE` in `include/env_vars.sh` (defau
 
 Output and work directories default to symlinks `outs/` and `work/`.
 
+For local testing and development, can instead run nextflow directly
+like below. Note this skips the crispat Poisson and Negative Binomial
+models which can be slow even on small test examples.
+
+```bash
+nextflow main.nf \
+         -resume \
+         -work-dir work/test \
+         -profile local \
+         --skipCrispatPoisson \
+         --skipCrispatNegBinom \
+         --sample_sheet outs/simulations/test/sample_sheet.csv \
+         --outdir outs/results/test_quick
+```
+
 ## Architecture
 
 **Data flow:**

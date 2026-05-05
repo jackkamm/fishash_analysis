@@ -426,7 +426,7 @@ workflow {
     merge_confusion(process_assignments.out.confusion.collect())
 
     combine_assignments(
-        params.sample_sheet,
+        file(params.sample_sheet),
         process_assignments.out.matrix.collect()
     )
 }

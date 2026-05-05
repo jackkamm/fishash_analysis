@@ -7,7 +7,7 @@ if (!dir.exists(out_dir)) {
 }
 
 seed <- 54321
-ntimes <- 5
+ntimes <- 3
 
 set.seed(seed)
 
@@ -17,8 +17,8 @@ paths <- file.path(out_dir, paste0(sim_labels, ".Rds"))
 for (i in 1:ntimes) {
     saveRDS(
         simulate_guidebender2(
-            n_guides=121,
-            n_cells=81,
+            n_guides=13,
+            n_cells=21,
             moi=.3,
             hurdle_prob=.1,
             snr=1,
