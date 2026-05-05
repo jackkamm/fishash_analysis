@@ -38,9 +38,9 @@ Rscript 21_process_barnyard_data.R   # 8 CPUs, 32GB RAM
 ./39_nextflow_run_replogle2022.bash
 
 # 4. Generate plots (4 CPUs, 16GB RAM)
-Rscript 61_plot_simulation_results.R
-Rscript 62_plot_barnyard_results.R
-Rscript 63_plot_replogle2022_results.R
+Rscript 81_plot_simulation_results.R
+Rscript 82_plot_barnyard_results.R
+Rscript 83_plot_replogle2022_results.R
 ```
 
 Each `3x_nextflow_run_*.bash` script sources `include/nextflow_run_common.sh` and runs Nextflow in its own `nextflow_run/<RUN_NAME>/` subdirectory so multiple runs can execute in parallel.
@@ -76,7 +76,7 @@ nextflow main.nf \
 3. `main.nf` runs all demultiplexing methods in parallel
 4. `bin/process_assignments.R` computes confusion matrices per method/replicate
 5. `bin/combine_assignments.R` and `bin/combine_confusion.R` aggregate results
-6. `6x_plot_*.R` scripts produce final figures
+6. `8x_plot_*.R` scripts produce final figures
 
 **Demultiplexing methods benchmarked** (all in `bin/`):
 - `run_fishash.R` — the method being evaluated (0 and 10 refitting iterations)
