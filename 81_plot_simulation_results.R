@@ -142,14 +142,7 @@ df_prec_recall <- read.csv(fname)
 
 df_prec_recall %<>% dplyr::mutate(F1=f1_score(Precision, Recall))
 
-matched <- stringr::str_match(df_prec_recall$sim_label,
-                              "moi_(.*)_iter_(\\d+)")
-
-matched <- matched[,-1]
-colnames(matched) <- c("moi", "replicate")
-
-df_prec_recall$moi <- as.numeric(matched[,'moi'])
-df_prec_recall$replicate <- as.integer(matched[,'replicate'])
+df_prec_recall %<>% cbind(parse_simlab_varyMoi(.$sim_label))
 
 df_prec_recall %<>%
     subset_methods()

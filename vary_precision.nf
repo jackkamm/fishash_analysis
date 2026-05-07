@@ -36,8 +36,9 @@ workflow {
 
     merge_confusion(process_assignments.out.confusion.collect())
 
-    combine_assignments(
-        file(params.sample_sheet),
-        process_assignments.out.matrix.collect()
-    )
+    // These can get large in this setting, and not really needed for plotting.
+    //combine_assignments(
+    //    file(params.sample_sheet),
+    //    process_assignments.out.matrix.collect()
+    //)
 }

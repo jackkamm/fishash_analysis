@@ -94,6 +94,20 @@ parse_simlab_varyNumGuides <- function(simlab) {
     matched
 }
 
+parse_simlab_varyMoi <- function(simlab) {
+    matched <- stringr::str_match(simlab,
+                                  "moi_(.*)_iter_(\\d+)")
+
+    matched <- matched[,-1]
+    colnames(matched) <- c("moi", "replicate")
+
+    matched %<>% as.data.frame()
+    matched$moi %<>% as.numeric()
+    matched$replicate %<>% as.integer()
+
+    matched
+}
+
 parse_simlab_varySignalNoiseCorr <- function(simlab) {
     matched <- stringr::str_match(simlab, 'corr_([^_]*)_')
     factor(matched[,2], levels=c('low', 'mid', 'high'))
