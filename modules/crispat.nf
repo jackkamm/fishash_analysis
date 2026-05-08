@@ -14,6 +14,7 @@ process run_crispat_gauss {
     script:
     """
     run_crispat_gauss.py $sim_h5ad crispat_gauss_
+    rm -rf crispat_gauss_batch0/loss_plots
     """
 }
 
@@ -33,6 +34,7 @@ process run_crispat_poisgauss {
     script:
     """
     run_crispat_poisgauss.py $sim_h5ad crispat_poisgauss_
+    rm -rf crispat_poisgauss_loss_plots
     """
 }
 
@@ -52,6 +54,7 @@ process run_crispat_poisson {
     script:
     """
     run_crispat_poisson.py $sim_h5ad crispat_poisson_ --cpus $task.cpus
+    rm -rf crispat_poisson_loss_plots
     """
 }
 
@@ -71,6 +74,7 @@ process run_crispat_negbinom {
     script:
     """
     run_crispat_negbinom.py $sim_h5ad crispat_negbinom_ --cpus $task.cpus
+    rm -rf crispat_negbinom_loss_plots
     """
 }
 
