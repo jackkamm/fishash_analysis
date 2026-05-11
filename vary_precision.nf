@@ -1,6 +1,7 @@
 include { convert_anndata }                                     from './modules/convert'
 include { process_assignments; combine_assignments; merge_confusion } from './modules/aggregate'
 include { FISHASH }  from './workflows/fishash'
+include { DEMUXEM }  from './workflows/demuxem'
 include { CLEANSER } from './workflows/cleanser'
 include { GEOMUX }   from './workflows/geomux'
 include { SCEPTRE }  from './workflows/sceptre'
@@ -26,6 +27,9 @@ workflow {
 
     GEOMUX(adata_ch, [5], precision_sweep)
     out_ch = out_ch.mix(GEOMUX.out.out)
+
+    DEMUXEM(adata_ch, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20])
+    out_ch = out_ch.mix(DEMUXEM.out.out)
 
     if (!params.skipCleanser) {
         CLEANSER(sims_ch, ["cs", "dc"], precision_sweep)

@@ -13,6 +13,7 @@ set -euxo pipefail
              --maxMemFactor 2 \
              --crispatBigMemFactor 2 \
              --cleanserMemFactor 4 \
+             --demuxemMemFactor 4 \
              --sample_sheet $OUTS/simulations/$SIM_NAME/sample_sheet.csv \
              --outdir $OUTS/results/$RUN_NAME
 }
