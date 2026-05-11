@@ -28,4 +28,14 @@ set -euxo pipefail
     Rscript \
         simulate/simulate_numCells20k_varySignalNoiseCorr.R \
         $OUTS/simulations/numCells20k_varySignalNoiseCorr
+
+    # 20k cells, high-gRNA regime, varying number of guides, extra noise dispersion
+    Rscript \
+        simulate/simulate_numCells20k_medUmi100_snr4_endo75_varyNumGuides_highPhiNoise.R \
+        $OUTS/simulations/numCells20k_medUmi100_snr4_endo75_varyNumGuides_highPhiNoise
+
+    # 20k cells, low-gRNA regime, varying number of guides, extra noise dispersion
+    Rscript \
+        simulate/simulate_numCells20k_medUmi20_snr1_endo25_varyNumGuides_highPhiNoise.R \
+        $OUTS/simulations/numCells20k_medUmi20_snr1_endo25_varyNumGuides_highPhiNoise
 }
