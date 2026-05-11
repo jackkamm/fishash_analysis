@@ -213,3 +213,70 @@ clean_trace_df <- function(df_trace) {
             peak_vmem_gb = mem_string_to_gb(peak_vmem)
         )
 }
+
+# for plotting the varying precision results
+
+clean_dataframe_varyPrec <- function(df) {
+    df %>%
+        dplyr::mutate(tuning_param=as.numeric(stringr::str_match(method, "([0-9\\.]+)$")[,2])) %>%
+        dplyr::mutate(
+            method=dplyr::case_when(
+                startsWith(method, "fishash") ~ "fishash",
+                startsWith(method, "cleanser_cs") ~ "cleanser_cs",
+                startsWith(method, "cleanser_dc") ~ "cleanser_dc",
+                startsWith(method, "geomux") ~ "geomux",
+                startsWith(method, "sceptre_mixture") ~ "sceptre_mixture",
+                startsWith(method, "demuxem") ~ "demuxem",
+                TRUE ~ method
+            )
+        ) %>%
+        dplyr::mutate(method=factor(method, levels=method_levels)) %>%
+        dplyr::mutate(
+            precision_nominal_bound=dplyr::case_when(
+                method %in% c("sceptre_mixture", "cleanser_cs", "cleanser_dc") ~ tuning_param,
+                method %in% c("fishash", "geomux") ~ 1-tuning_param,
+                TRUE ~ NA_real_
+            )
+        ) %>%
+        dplyr::filter(subset == "full")
+}
+
+aggregate_prec_recall <- function(df) {
+    df %>%
+        dplyr::group_by(method, tuning_param, precision_nominal_bound, .add=TRUE) %>%
+        dplyr::summarize(TN=sum(TN), FN=sum(FN), FP=sum(FP), TP=sum(TP),
+                         Precision_avg=mean(Precision), Recall_avg=mean(Recall),
+                         .groups='drop') %>%
+        dplyr::mutate(
+            Precision_agg=TP/(TP+FP), Recall_agg=TP/(TP+FN)
+        )
+}
+
+average_precision_score <- function(TN, FN, FP, TP) {
+    recall <- TP / (TP + FN)
+    precision <- TP / (TP + FP)
+
+    tot <- unique(TN + FN + FP + TP)
+    tot_class1 <- unique(TP + FN)
+
+    stopifnot(length(tot) == 1)
+    stopifnot(length(tot_class1) == 1)
+    
+    o <- order(recall)
+
+    recall <- c(0, recall[o], 1)
+    precision <- c(1,precision[o], tot_class1 / tot)
+
+    sum(
+        diff(recall) * precision[-1]
+    )
+}
+
+add_avg_prec_score <- function(df) {
+    df %>%
+        dplyr::group_by(method, sim_label, .add=TRUE) %>%
+        dplyr::summarize(
+            auprc=average_precision_score(TN=TN, FN=FN, FP=FP, TP=TP),
+            .groups='drop'
+        )
+}
