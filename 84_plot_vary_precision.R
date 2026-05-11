@@ -41,7 +41,7 @@ df_prec_recall_varyNguides %>%
     add_avg_prec_score() ->
     df_prec_recall_varyNguides_auprc
 
-pdf(file.path(plot_dir, "numCells20k_varyNumGuides_precVsNom.pdf"),
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_precVsNom.pdf"),
     width=14, height=7)
 df_prec_recall_varyNguides_sum %>%
     dplyr::filter(method != 'demuxem') %>%
@@ -60,7 +60,7 @@ df_prec_recall_varyNguides_sum %>%
 dev.off()
 
 
-pdf(file.path(plot_dir, "numCells20k_varyNumGuides_precVsRecall.pdf"),
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_precVsRecall.pdf"),
     width=14, height=7)
 df_prec_recall_varyNguides_sum %>%
     ggplot(aes(y=Precision_agg, x=Recall_agg, color=method)) +
@@ -77,7 +77,7 @@ df_prec_recall_varyNguides_sum %>%
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='bottom')
 dev.off()
 
-pdf(file.path(plot_dir, "numCells20k_varyNumGuides_auprc.pdf"),
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_auprc.pdf"),
     width=14, height=7)
 df_prec_recall_varyNguides_auprc %>%
     ggplot(aes(x=method, y=auprc, color=method)) +
@@ -111,7 +111,7 @@ df_prec_recall_varyMoi %>%
     add_avg_prec_score() ->
     df_prec_recall_varyMoi_auprc
 
-pdf(file.path(plot_dir, "numCells20k_varyMoi_precVsNom.pdf"),
+pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_precVsNom.pdf"),
     width=14, height=7)
 df_prec_recall_varyMoi_sum %>%
     dplyr::filter(method != 'demuxem') %>%
@@ -129,7 +129,7 @@ df_prec_recall_varyMoi_sum %>%
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='bottom')
 dev.off()
 
-pdf(file.path(plot_dir, "numCells20k_varyMoi_precVsRecall.pdf"),
+pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_precVsRecall.pdf"),
     width=14, height=7)
 df_prec_recall_varyMoi_sum %>%
     ggplot(aes(y=Precision_agg, x=Recall_agg, color=method)) +
@@ -146,7 +146,7 @@ df_prec_recall_varyMoi_sum %>%
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='bottom')
 dev.off()
 
-pdf(file.path(plot_dir, "numCells20k_varyMoi_auprc.pdf"),
+pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_auprc.pdf"),
     width=14, height=7)
 df_prec_recall_varyMoi_auprc %>%
     ggplot(aes(x=method, y=auprc, color=method)) +
