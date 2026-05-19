@@ -38,4 +38,9 @@ set -euxo pipefail
     Rscript \
         simulate/simulate_numCells20k_medUmi20_snr1_endo25_varyNumGuides_highPhiNoise.R \
         $OUTS/simulations/numCells20k_medUmi20_snr1_endo25_varyNumGuides_highPhiNoise
+
+    # varying MOI, extra noise dispersion
+    Rscript \
+        simulate/simulate_numCells20k_numGuides200_varyMOI_highPhiNoise.R \
+        $OUTS/simulations/numCells20k_numGuides200_varyMOI_highPhiNoise
 }
