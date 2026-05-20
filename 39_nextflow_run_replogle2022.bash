@@ -14,6 +14,6 @@ set -euxo pipefail
              --cleanserMemFactor 4 \
              --demuxemMemFactor 4 \
              --maxMemFactor 2 \
-             --sample_sheet $OUTS/replogle2022/sample_sheet.csv \
+             --sample_sheet $OUTS/replogle2022/processed/sample_sheet.csv \
              --outdir $OUTS/results/$RUN_NAME
 }

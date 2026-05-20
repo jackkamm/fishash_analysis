@@ -7,6 +7,11 @@
 # Recommended: 8 cpus, 32GB memory
 Rscript 21_process_barnyard_data.R
 
+# This part requires slurm to be setup
+# TODO: Make it work for non-slurm systems
+./22_prep_replogle2022_processing.py
+sbatch < 23_process_replogle2022.slurm 
+
 # Recommended: 2 cpus, 16GB memory.
 #
 # Running these in sequence may take a long time (days).  Consider
