@@ -69,17 +69,29 @@ sceptobj <- import_data(
 
 sceptobj %<>% set_analysis_parameters()
 
-if (args$cpus == 1) {
-    sceptobj %<>% assign_grnas(method="mixture",
-                               probability_threshold=args$probability_threshold,
-                               parallel=FALSE)
-} else {
-    sceptobj %<>% assign_grnas(method="mixture",
-                               probability_threshold=args$probability_threshold,
-                               parallel=TRUE,
-                               n_processors=args$cpus)
+run_sceptre_assign_grnas <- function(sceptobj) {
+    tryCatch({
+        assign_grnas(sceptobj,
+                     method="mixture",
+                     probability_threshold=args$probability_threshold,
+                     # on linux, better to rely on BLAS/LAPACK instead of mclapply
+                     parallel=FALSE)
+    }, error = function(msg) {
+        # In rare cases the initial Poisson GLM fit failed during the
+        # IRLS (running into infinite weights); specifically ran into
+        # this on Replogle2022 gwps batch KD8_p3_26. In that case, try
+        # running with the reduced formula as suggested in
+        # https://timothy-barry.github.io/sceptre-book/assign-grnas.html#sec-mixture_method
+        print("Failed, trying with reduced design")
+        assign_grnas(sceptobj,
+                     method="mixture",
+                     probability_threshold=args$probability_threshold,
+                     formula_object = formula(~ log(grna_n_nonzero+1) + log(grna_n_umis+1)),
+                     parallel=FALSE)
+    })
 }
 
+sceptobj %<>% run_sceptre_assign_grnas()
 
 assignments_sceptre <- get_grna_assignments(
     sceptre_object = sceptobj,

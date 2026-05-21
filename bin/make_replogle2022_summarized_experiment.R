@@ -106,6 +106,8 @@ cntB <-t(modmat_B[intersect_B,]) %*% mat_grna[intersect_B,]
 # Create matrix for both nonzero
 
 stopifnot(rownames(cntA) == rownames(cntB))
+stopifnot(rownames(cntA) == df_k562_gwps_guides$`unique sgRNA pair ID`)
+
 stopifnot(colnames(cntA) == colnames(cntB))
 stopifnot(colnames(cntA) == colnames(mat_grna))
 stopifnot(colnames(cntA) == colnames(mat_gex))
@@ -119,6 +121,11 @@ se_grna <- SummarizedExperiment(
         counts=rbind(cntA, cntB),
         ground_truth=rbind(both_nonzero, both_nonzero)
     )
+)
+
+rownames(se_grna) <- with(
+    df_k562_gwps_guides,
+    c(sgID_A_clean, sgID_B_clean)
 )
 
 attr(se_grna, 'gex') <- SummarizedExperiment(
