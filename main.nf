@@ -42,8 +42,10 @@ workflow {
 
     merge_confusion(process_assignments.out.confusion.collect())
 
-    combine_assignments(
-        file(params.sample_sheet),
-        process_assignments.out.matrix.collect()
-    )
+    if (!params.skipCombineAssignments) {
+        combine_assignments(
+            file(params.sample_sheet),
+            process_assignments.out.matrix.collect()
+        )
+    }
 }

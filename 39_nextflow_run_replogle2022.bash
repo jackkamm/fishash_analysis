@@ -9,6 +9,7 @@ set -euxo pipefail
              -resume \
              -work-dir $NXF_WORKDIR/$RUN_NAME \
              -profile $NXF_PROFILE \
+             --skipCombineAssignments \
              --skipCrispatNegBinom \
              --crispatBigMemFactor 2 \
              --cleanserMemFactor 4 \
