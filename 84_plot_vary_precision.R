@@ -89,6 +89,31 @@ df_prec_recall_varyNguides_auprc %>%
     theme(axis.text.x=element_text(angle=45, hjust=1))
 dev.off()
 
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_auprc_vs_f1.pdf"),
+    width=14, height=7)
+df_prec_recall_varyNguides %>%
+    dplyr::mutate(
+        is_default=dplyr::case_when(
+            method=='demuxem' ~ tuning_param == 2,
+            method=='sceptre_mixture' ~ precision_nominal_bound == 0.8,
+            TRUE ~ precision_nominal_bound == 0.95
+        )
+    ) %>%
+    dplyr::filter(is_default) %>%
+    dplyr::mutate(default_f1=f1_score(Precision, Recall)) %>%
+    dplyr::select(method, subset, sim_label, nguides, regime, default_f1) %>%
+    dplyr::right_join(df_prec_recall_varyNguides_auprc) %>%
+    ggplot(aes(x=default_f1, y=auprc, color=method)) +
+    geom_point(shape=1) +
+    scale_color_manual(values=method_colors) +
+    facet_grid(regime ~ nguides, labeller='label_both') +
+    #xlim(0,1) + ylim(0,1) +
+    xlab("F1 (at default cutoffs)") +
+    ylab("AUPRC (coarse-grained estimate)") +
+    theme_bw(base_size=16) +
+    theme(legend.position='bottom')
+dev.off()
+
 ## varyMoi scenario
 
 df_prec_recall_varyMoi <- read.csv(
@@ -156,4 +181,29 @@ df_prec_recall_varyMoi_auprc %>%
     facet_wrap(~moi, labeller='label_both', nrow=2) +
     theme_bw(base_size=16) +
     theme(axis.text.x=element_text(angle=45, hjust=1))
+dev.off()
+
+pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_auprc_vs_f1.pdf"),
+    width=14, height=7)
+df_prec_recall_varyMoi %>%
+    dplyr::mutate(
+        is_default=dplyr::case_when(
+            method=='demuxem' ~ tuning_param == 2,
+            method=='sceptre_mixture' ~ precision_nominal_bound == 0.8,
+            TRUE ~ precision_nominal_bound == 0.95
+        )
+    ) %>%
+    dplyr::filter(is_default) %>%
+    dplyr::mutate(default_f1=f1_score(Precision, Recall)) %>%
+    dplyr::select(method, subset, sim_label, moi, default_f1) %>%
+    dplyr::right_join(df_prec_recall_varyMoi_auprc) %>%
+    ggplot(aes(x=default_f1, y=auprc, color=method)) +
+    geom_point(shape=1) +
+    scale_color_manual(values=method_colors) +
+    facet_wrap(~moi, labeller='label_both', nrow=2) +
+    #xlim(0,1) + ylim(0,1) +
+    xlab("F1 (at default cutoffs)") +
+    ylab("AUPRC (coarse-grained estimate)") +
+    theme_bw(base_size=16) +
+    theme(legend.position='bottom')
 dev.off()
