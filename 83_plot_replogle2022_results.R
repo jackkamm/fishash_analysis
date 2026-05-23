@@ -24,33 +24,41 @@ df_prec_recall %<>%
     dplyr::filter(subset == "full") %>%
     subset_methods()
 
-# Add baseline of calling every guide present if it has >0 UMIs
+# Extract cell-level stats, used for reporting some summary stats as
+# well as constructing a baseline classifier
 
 batches <- unique(df_prec_recall$sim_label)
 
-baseline_prec <- sapply(
+lapply(
     batches, function(x) {
         se <- readRDS(file.path(OUTS, "replogle2022",
-                                "split_by_batch", paste0(x, ".rds")))
-        prec <- sum(assay(se, 'ground_truth')) / sum(assay(se, 'counts') > 0)
+                                "processed", paste0(x, ".Rds")))
+        data.frame(
+            sim_label=x,
+            n_umi=colSums(assay(se, 'counts')),
+            n_nonzero=colSums(assay(se, 'counts') > 0),
+            n_true=colSums(assay(se, 'ground_truth'))
+        )
     }
-)
+) %>%
+    do.call(what=rbind) ->
+    df_cell_stats
 
-df_baseline <- data.frame(
-    method = "baseline",
-    sim_label = batches,
-    Precision = baseline_prec,
-    Recall = 1
-)
+write.csv(df_cell_stats, file.path(OUTS, "replogle2022", "replogle2022_cell_stats.csv"))
 
+# Add baseline of calling every guide present if it has >0 UMIs.
+# (Note the proxy ground truth is a strict subset of the nonzero guides)
+
+df_cell_stats %>%
+    dplyr::group_by(sim_label) %>%
+    dplyr::summarize(Precision=sum(n_true) / sum(n_nonzero)) %>%
+    dplyr::mutate(Recall=1, method="baseline") %>%
+    .[, c("method", "sim_label", "Precision", "Recall")] ->
+    df_baseline
+    
 df_prec_recall %<>% .[, colnames(df_baseline)]
 
 df_prec_recall %<>% rbind(df_baseline)
-
-# check the median precision of the baseline
-summary(df_baseline$Precision)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-#0.07103 0.12180 0.14788 0.16336 0.19388 0.41732
 
 # Add F1 score
 
@@ -143,3 +151,29 @@ df_trace_sub %>%
     theme_bw(base_size=16) +
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
 dev.off()
+
+## save some summary stats
+
+df_gwlib <- readr::read_csv("data/k562_genomewide_library.csv.gz")
+
+meta_summary_stats <- data.frame(
+    baseline_prec_median = median(df_baseline$Precision),
+    nonzero_median = median(df_cell_stats$n_nonzero),
+    n_batch = length(batches),
+    n_cell = nrow(df_cell_stats),
+    sgrna_pairs = nrow(df_gwlib),
+    sgrna_targets = 2*nrow(df_gwlib),
+    # Note: the number of grna features in the 10x *.features.tsv.gz
+    # files is equal to sgrna_targets - sgrna_dups
+    sgrna_dups = sum(duplicated(with(
+        df_gwlib,
+        c(`targeting sequence A`, `targeting sequence B`)
+    )))
+)
+
+write.csv(
+    meta_summary_stats,
+    file.path(plot_dir, "replogle2022_meta_summary_stats.csv"),
+    quote=F,
+    row.names=F
+)

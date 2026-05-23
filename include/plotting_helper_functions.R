@@ -180,9 +180,9 @@ mem_string_to_gb <- function(mem_str) {
 clean_trace_df <- function(df_trace) {
     df_trace %>%
         dplyr::filter(status %in% c('COMPLETED', 'CACHED')) %>%
-        dplyr::filter(startsWith(method, 'run_')) %>%
         dplyr::mutate(sim_label=stringr::str_match(tag, '.*simlab=(.*)')[,2]) %>%
-        dplyr::mutate(method=stringr::str_match(method, 'run_(.*)')[,2]) %>%
+        dplyr::mutate(method=stringr::str_match(method, '^(.*:)?run_(.*)')[,3]) %>%
+        dplyr::filter(!is.na(method)) %>%
         dplyr::mutate(method=dplyr::if_else(
             method=='cleanser',
             paste0('cleanser_', stringr::str_match(tag, 'seqtech=(.*),simlab=.*')[,2], "_0.95"),
