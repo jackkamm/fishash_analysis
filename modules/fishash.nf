@@ -11,7 +11,8 @@ process run_fishash {
     tuple(val(sim_label),
           val("fishash_refit${refit_times}_padj${padj_cutoff}"),
           path(sim_rds),
-          path("out.mtx"))
+          path("out.mtx"),
+          path("teststats.mtx"))
 
     script:
     """
@@ -19,6 +20,7 @@ process run_fishash {
         --in_rds $sim_rds \
         --refit $refit_times \
         --padj_cutoff $padj_cutoff \
-        --out_mtx out.mtx
+        --out_mtx out.mtx \
+        --teststats_mtx teststats.mtx
     """
 }

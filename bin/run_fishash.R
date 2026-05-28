@@ -20,6 +20,13 @@ parser$add_argument(
     help="Path to save results to"
 )
 parser$add_argument(
+    "--teststats_mtx",
+    required = TRUE,
+    default = NULL,
+    type = "character",
+    help="Path to save test statistics to"
+)
+parser$add_argument(
     "--refit",
     required = FALSE,
     default = 0,
@@ -35,13 +42,23 @@ parser$add_argument(
 )
 args <- parser$parse_args()
 
+res_fishash <- fishash(assay(readRDS(args$in_rds), "counts"),
+                       refit=args$refit,
+                       padj_cutoff=args$padj_cutoff,
+                       exclude_empty=TRUE)
+
 writeMM(
     assay(
-        fishash(assay(readRDS(args$in_rds), "counts"),
-                refit=args$refit,
-                padj_cutoff=args$padj_cutoff,
-                exclude_empty=TRUE),
+        res_fishash,
         'assigned'
     ),
     args$out_mtx
+)
+
+writeMM(
+    -assay(
+        res_fishash,
+        'log_pval'
+    ),
+    args$teststats_mtx
 )

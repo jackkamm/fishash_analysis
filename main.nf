@@ -14,7 +14,10 @@ workflow {
     out_ch = channel.empty()
 
     FISHASH(sims_ch, [0, 10], [0.05])
-    out_ch = out_ch.mix(FISHASH.out.out)
+    out_ch = out_ch.mix(FISHASH.out.out.map{
+        simlab, methodlab, sim_rds, out_mtx, teststats_mtx ->
+        tuple(simlab, methodlab, sim_rds, out_mtx)
+    })
 
     if (!params.skipSceptre) {
         SCEPTRE(sims_ch, [0.8])
@@ -32,7 +35,7 @@ workflow {
 
     if (!params.skipCleanser) {
         CLEANSER(sims_ch, ["cs", "dc"], [0.5, 0.95])
-        out_ch = out_ch.mix(CLEANSER.out.out)
+        out_ch = out_ch.mix(CLEANSER.out.assignments)
     }
 
     CRISPAT(adata_ch)

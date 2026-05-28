@@ -1,5 +1,5 @@
 include { convert_mtx } from '../modules/convert'
-include { run_cleanser; convert_cleanser_out } from '../modules/cleanser'
+include { run_cleanser; reformat_cleanser_mtx; convert_cleanser_out } from '../modules/cleanser'
 
 workflow CLEANSER {
     take:
@@ -10,8 +10,10 @@ workflow CLEANSER {
     main:
     convert_mtx(sims_ch)
     run_cleanser(convert_mtx.out, seqtech_list)
+    reformat_cleanser_mtx(run_cleanser.out)
     convert_cleanser_out(run_cleanser.out, cutoff_list)
 
     emit:
-    out = convert_cleanser_out.out
+    assignments = convert_cleanser_out.out
+    stats = reformat_cleanser_mtx.out
 }

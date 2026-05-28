@@ -54,3 +54,43 @@ process merge_confusion {
     combine_confusion.R combined $confusion_list
     """
 }
+
+// process and combine test stats
+// FIXME: Reduce code duplication with process_assignments, combine_assignments?
+
+process process_teststats {
+    label "data_conversion"
+
+    input:
+    tuple val(sim_label), val(method_id), path(sim_rds), path(result_mtx)
+
+    output:
+    path "${sim_label}__${method_id}_teststats.Rds"
+
+    script:
+    """
+    process_teststats.R \
+        --sim_label $sim_label \
+        --method $method_id \
+        --sim_rds $sim_rds \
+        --stats_mtx $result_mtx \
+        --out_rds ${sim_label}__${method_id}_teststats.Rds
+    """
+}
+
+process combine_teststats {
+    label "split_combine"
+    publishDir params.outdir, mode: 'copy'
+
+    input:
+    path sample_sheet
+    path x
+
+    output:
+    path 'combined_teststats.Rds'
+
+    script:
+    """
+    combine_teststats.R combined_teststats.Rds $sample_sheet $x
+    """
+}
