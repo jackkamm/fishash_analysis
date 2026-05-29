@@ -66,7 +66,7 @@ df_prec_recall %>%
     geom_hline(yintercept=.95, lty='dotted') +
     #geom_point(alpha=.5, shape=1, position=position_jitterdodge(jitter.width=.1)) +
     #geom_boxplot(alpha=.5) +
-    geom_point(shape=1) +
+    geom_point(shape=8) +
     facet_grid(regime~nguides, labeller='label_both') +
     #xlim(0,1) +
     #ylim(0, 1) +
@@ -156,7 +156,7 @@ df_prec_recall %>%
     geom_hline(yintercept=.95, lty='dotted') +
     #geom_point(alpha=.5, shape=1, position=position_jitterdodge(jitter.width=.1)) +
     #geom_boxplot(alpha=.5) +
-    geom_point(shape=1) +
+    geom_point(shape=8) +
     facet_wrap(~moi, labeller='label_both', nrow=2) +
     #xlim(0,1) +
     #ylim(0, 1) +
