@@ -59,7 +59,7 @@ process run_crispat_poisson {
 }
 
 process run_crispat_negbinom {
-    label "crispat_big"
+    label "crispat_verybig"
     tag "simlab=${sim_label}"
 
     input:
