@@ -106,6 +106,8 @@ teststats_pair2df <- function(se_pair) {
     n_zero <- nrow(sim) * ncol(sim) - sum(nonzero_mask)
     n_zero_pos <- sum(truth_mask) - sum(truth_mask & nonzero_mask)
 
+    assay(res, 'raw_count') <- assay(sim, 'counts')
+
     ret <- list()
     for (k in names(assays(res))) {
         # we assume the teststats are 0 whenever count is 0
@@ -424,7 +426,7 @@ df_fishash_teststats_varyNguides %<>%
 ## Plots
 
 pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_precVsRecall.pdf"),
-    width=14, height=7)
+    width=16.5, height=6.5)
 bind_rows(
     df_prec_recall_varyNguides %>%
         group_by(method, regime, nguides, tuning_param, precision_nominal_bound) %>%
@@ -439,20 +441,21 @@ bind_rows(
         mutate(curve_type="Discretized",
                default=TRUE),
     ) %>%
-    mutate(method=forcats::fct_relevel(method, method_levels)) %>%
+    mutate(method=forcats::fct_relevel(method, method_levels2)) %>%
     rename(default_threshold=default) %>%
-    arrange(desc(curve_type), method) %>% {
+    arrange(desc(curve_type), method) %>%
+    {
         ggplot(., aes(x=Recall, y=Precision, color=method)) +
             geom_step(aes(lty=curve_type), direction="vh") +
             geom_point(aes(shape=default_threshold),
                        data=filter(., curve_type=='Discretized')) +
             facet_grid(regime~nguides, labeller='label_both') +
-            scale_color_manual(values=method_colors) +
+            scale_color_manual(values=method_colors2) +
             scale_shape_manual(values=c(1,8)) +
             scale_linetype_manual(values=c('solid', 'dotdash')) +
             xlim(0,1) +
             ylim(0,1) +
-            guides(color="none") +
+            #guides(color="none") +
             theme_classic(base_size=16) +
             theme(axis.text.x=element_text(angle=45, hjust=1),
                   legend.position='bottom')
@@ -506,7 +509,7 @@ bind_rows(
     )) %>%
     ggplot(aes(x=method, y=AUPRC, color=method2)) +
     geom_boxplot() +
-    scale_color_manual(values=method_colors) +
+    scale_color_manual(values=method_colors2) +
     geom_vline(xintercept=6.5, lty='dotted', linewidth=.5) +
     ylim(0,1) +
     facet_grid(regime~nguides) +
@@ -677,7 +680,7 @@ df_fishash_teststats_varyMoi %<>%
 ## Plots
 
 pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_precVsRecall.pdf"),
-    width=14, height=7)
+    width=16.5, height=6.5)
 bind_rows(
     df_prec_recall_varyMoi %>%
         group_by(method, moi, tuning_param, precision_nominal_bound) %>%
@@ -692,7 +695,7 @@ bind_rows(
         mutate(curve_type="Discretized",
                default=TRUE),
     ) %>%
-    mutate(method=forcats::fct_relevel(method, method_levels)) %>%
+    mutate(method=forcats::fct_relevel(method, method_levels2)) %>%
     rename(default_threshold=default) %>%
     arrange(desc(curve_type), method) %>% {
         ggplot(., aes(x=Recall, y=Precision, color=method)) +
@@ -700,12 +703,12 @@ bind_rows(
             geom_point(aes(shape=default_threshold),
                        data=filter(., curve_type=='Discretized')) +
             facet_wrap(~moi, nrow=2, labeller='label_both') +
-            scale_color_manual(values=method_colors) +
+            scale_color_manual(values=method_colors2) +
             scale_shape_manual(values=c(1,8)) +
             scale_linetype_manual(values=c('solid', 'dotdash')) +
             xlim(0,1) +
             ylim(0,1) +
-            guides(color="none") +
+            #guides(color="none") +
             theme_classic(base_size=16) +
             theme(axis.text.x=element_text(angle=45, hjust=1),
                   legend.position='bottom')
@@ -755,11 +758,11 @@ bind_rows(
         method
     )) %>%
     mutate(method=forcats::fct_relevel(
-        method, c(method_levels, sprintf("%s (Full)", method_levels))
+        method, c(method_levels2, sprintf("%s (Full)", method_levels2))
     )) %>%
     ggplot(aes(x=method, y=AUPRC, color=method2)) +
     geom_boxplot() +
-    scale_color_manual(values=method_colors) +
+    scale_color_manual(values=method_colors2) +
     geom_vline(xintercept=6.5, lty='dotted', linewidth=.5) +
     ylim(0,1) +
     facet_wrap(~moi, nrow=2, labeller='label_both', scales='free_x') +

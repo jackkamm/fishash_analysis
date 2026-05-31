@@ -34,7 +34,7 @@ workflow {
     out_ch = out_ch.mix(DEMUXEM.out.out)
 
     if (!params.skipCleanser) {
-        CLEANSER(sims_ch, ["cs", "dc"], [0.5, 0.95])
+        CLEANSER(sims_ch, ["cs", "dc"], [0.5, 0.8, 0.95])
         out_ch = out_ch.mix(CLEANSER.out.assignments)
     }
 

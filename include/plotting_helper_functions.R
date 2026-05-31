@@ -15,6 +15,10 @@ method_levels <- c(
 method_colors <- pals::brewer.paired(10)
 names(method_colors) <- method_levels
 
+method_levels2 <- c(method_levels, 'raw_count')
+method_colors2 <- c(method_colors, pals::brewer.paired(12)[12])
+names(method_colors2) <- method_levels2
+
 ## Some helper functions
 
 f1_score <- function(precision, recall) {
@@ -133,8 +137,8 @@ subset_methods <- function(df) {
             'crispat_poisgauss',
             'crispat_gauss',
             'sceptre_mixture_prob0.8',
-            'cleanser_cs_0.95',
-            'cleanser_dc_0.95',
+            'cleanser_cs_0.8',
+            'cleanser_dc_0.5',
             'geomux_minumi5_fdr0.05',
             # tag names from older versions of the pipeline
             'fishash_refit10',
@@ -147,8 +151,8 @@ subset_methods <- function(df) {
                 method=='sceptre_mixture_prob0.8' ~'sceptre_mixture',
                 method=="demuxem_signal2" ~ "demuxem",
                 method=='geomux_minumi5_fdr0.05' ~ 'geomux',
-                method=='cleanser_cs_0.95' ~ 'cleanser_cs',
-                method=='cleanser_dc_0.95' ~ 'cleanser_dc',
+                method=='cleanser_cs_0.8' ~ 'cleanser_cs',
+                method=='cleanser_dc_0.5' ~ 'cleanser_dc',
                 # alternate tag names from older versions of pipeline
                 method=="fishash_refit10" ~ "fishash",
                 method=='geomux_minumi5' ~ 'geomux',

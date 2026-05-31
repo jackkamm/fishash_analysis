@@ -46,6 +46,45 @@ df_prec_recall <- rbind(
         dplyr::mutate(regime="low_grna")
 )
 
+# HACK Due to time pressure, I did not rerun
+# 34_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides.bash
+# after updating main.nf to run CLEANSER with 80% cutoff,
+# due to nextflow workdir being deleted and looming revision deadline.
+# Instead, I just pulled the corresponding result from
+# 54_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides_varyPrecision.bash
+# which is exactly the same.
+#
+# TODO: Can delete this block if I rerun the whole pipeline again
+if (!('cleanser_cs_0.8' %in% df_prec_recall$method)) {
+    prefix_high_prc <- file.path(
+        OUTS,
+        "results",
+        "numCells20k_medUmi100_snr4_endo75_varyNumGuides_varyPrecision"
+    )
+
+    prefix_low_prc <- file.path(
+        OUTS,
+        "results",
+        "numCells20k_medUmi20_snr1_endo25_varyNumGuides_varyPrecision"
+    )
+
+    df_prec_recall %<>% rbind(
+        rbind(
+            read.csv(file.path(
+                prefix_high_prc,
+                "combined_confusion.csv"
+            )) %>%
+                dplyr::mutate(regime="high_grna"),
+            read.csv(file.path(
+                prefix_low_prc,
+                "combined_confusion.csv"
+            )) %>%
+                dplyr::mutate(regime="low_grna")
+        ) %>%
+            dplyr::filter(method == 'cleanser_cs_0.8')
+    )
+}
+
 df_prec_recall %<>% dplyr::mutate(F1=f1_score(Precision, Recall))
 
 df_prec_recall %<>% cbind(
@@ -57,7 +96,7 @@ df_prec_recall %<>% cbind(
 df_prec_recall %<>%
     subset_methods()
 
-pdf(file.path(plot_dir, "numCells20k_varyNumGuides_precrecall.pdf"), width=14, height=7)
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_precrecall.pdf"), width=16.5, height=5.5)
 set.seed(12345) # for shuffling the data point order
 df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
@@ -76,7 +115,7 @@ df_prec_recall %>%
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='bottom')
 dev.off()
 
-pdf(file.path(plot_dir, "numCells20k_varyNumGuides_f1.pdf"), width=14, height=7)
+pdf(file.path(plot_dir, "numCells20k_varyNumGuides_f1.pdf"), width=16.5, height=5.5)
 df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
     ggplot(aes(x=method, y=F1, color=method)) +
@@ -122,7 +161,9 @@ df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
     dplyr::group_by(method) %>%
     dplyr::summarize(n_below_95=sum(Precision < .95),
-                     n_below_90=sum(Precision < .9)) %>%
+                     n_below_90=sum(Precision < .9),
+                     n_below_80=sum(Precision < .8),
+                     n_below_50=sum(Precision < .5)) %>%
     write.csv(
         file.path(plot_dir, "numCells20k_varyNumGuides_ntimes_precision_below.csv"),
         row.names=F
@@ -140,6 +181,27 @@ fname <- file.path(
 
 df_prec_recall <- read.csv(fname)
 
+# HACK Due to time pressure, I did not rerun
+# 36_nextflow_run_numCells20k_numGuides200_varyMOI.bash
+# after updating main.nf to run CLEANSER with 80% cutoff,
+# due to nextflow workdir being deleted and looming revision deadline.
+# Instead, I just pulled the corresponding result from
+# 46_nextflow_run_numCells20k_numGuides200_varyMOI_highPhiNoise.bash
+# which is exactly the same.
+#
+# TODO: Can delete this block if I rerun the whole pipeline again
+if (!('cleanser_cs_0.8' %in% df_prec_recall$method)) {
+    df_prec_recall %<>% rbind(
+        read.csv(file.path(
+            OUTS,
+            "results",
+            "numCells20k_numGuides200_varyMOI_varyPrecision",
+            "combined_confusion.csv"
+        )) %>%
+            dplyr::filter(method == 'cleanser_cs_0.8')
+    )
+}
+
 df_prec_recall %<>% dplyr::mutate(F1=f1_score(Precision, Recall))
 
 df_prec_recall %<>% cbind(parse_simlab_varyMoi(.$sim_label))
@@ -147,7 +209,7 @@ df_prec_recall %<>% cbind(parse_simlab_varyMoi(.$sim_label))
 df_prec_recall %<>%
     subset_methods()
 
-pdf(file.path(plot_dir, "numCells20k_numGuides200_varyMOI_precrecall.pdf"), width=14, height=7)
+pdf(file.path(plot_dir, "numCells20k_numGuides200_varyMOI_precrecall.pdf"), width=16.5, height=5.5)
 set.seed(12345) # for shuffling the data point order
 df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
@@ -163,10 +225,11 @@ df_prec_recall %>%
     #scale_color_manual(values=pals::okabe(3)) +
     scale_color_manual(values=method_colors) +
     theme_bw(base_size=16) +
+    guides(color=guide_legend(nrow=1)) +
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='bottom')
 dev.off()
 
-pdf(file.path(plot_dir, "numCells20k_numGuides200_varyMOI_f1.pdf"), width=14, height=7)
+pdf(file.path(plot_dir, "numCells20k_numGuides200_varyMOI_f1.pdf"), width=16.5, height=5.5)
 df_prec_recall %>%
     dplyr::filter(subset=='full') %>%
     ggplot(aes(x=method, y=F1, color=method)) +
