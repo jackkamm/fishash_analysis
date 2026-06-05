@@ -46,45 +46,6 @@ df_prec_recall <- rbind(
         dplyr::mutate(regime="low_grna")
 )
 
-# HACK Due to time pressure, I did not rerun
-# 34_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides.bash
-# after updating main.nf to run CLEANSER with 80% cutoff,
-# due to nextflow workdir being deleted and looming revision deadline.
-# Instead, I just pulled the corresponding result from
-# 54_nextflow_run_numCells20k_medUmi100_snr4_endo75_varyNumGuides_varyPrecision.bash
-# which is exactly the same.
-#
-# TODO: Can delete this block if I rerun the whole pipeline again
-if (!('cleanser_cs_0.8' %in% df_prec_recall$method)) {
-    prefix_high_prc <- file.path(
-        OUTS,
-        "results",
-        "numCells20k_medUmi100_snr4_endo75_varyNumGuides_varyPrecision"
-    )
-
-    prefix_low_prc <- file.path(
-        OUTS,
-        "results",
-        "numCells20k_medUmi20_snr1_endo25_varyNumGuides_varyPrecision"
-    )
-
-    df_prec_recall %<>% rbind(
-        rbind(
-            read.csv(file.path(
-                prefix_high_prc,
-                "combined_confusion.csv"
-            )) %>%
-                dplyr::mutate(regime="high_grna"),
-            read.csv(file.path(
-                prefix_low_prc,
-                "combined_confusion.csv"
-            )) %>%
-                dplyr::mutate(regime="low_grna")
-        ) %>%
-            dplyr::filter(method == 'cleanser_cs_0.8')
-    )
-}
-
 df_prec_recall %<>% dplyr::mutate(F1=f1_score(Precision, Recall))
 
 df_prec_recall %<>% cbind(
@@ -180,27 +141,6 @@ fname <- file.path(
 )
 
 df_prec_recall <- read.csv(fname)
-
-# HACK Due to time pressure, I did not rerun
-# 36_nextflow_run_numCells20k_numGuides200_varyMOI.bash
-# after updating main.nf to run CLEANSER with 80% cutoff,
-# due to nextflow workdir being deleted and looming revision deadline.
-# Instead, I just pulled the corresponding result from
-# 46_nextflow_run_numCells20k_numGuides200_varyMOI_highPhiNoise.bash
-# which is exactly the same.
-#
-# TODO: Can delete this block if I rerun the whole pipeline again
-if (!('cleanser_cs_0.8' %in% df_prec_recall$method)) {
-    df_prec_recall %<>% rbind(
-        read.csv(file.path(
-            OUTS,
-            "results",
-            "numCells20k_numGuides200_varyMOI_varyPrecision",
-            "combined_confusion.csv"
-        )) %>%
-            dplyr::filter(method == 'cleanser_cs_0.8')
-    )
-}
 
 df_prec_recall %<>% dplyr::mutate(F1=f1_score(Precision, Recall))
 

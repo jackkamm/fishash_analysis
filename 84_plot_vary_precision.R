@@ -91,7 +91,8 @@ discreteSweep_at_default <- function(method, tuning_param) {
         method=='demuxem' ~ tuning_param == 2,
         method=='sceptre_mixture' ~ tuning_param == 0.8,
         method %in% c('geomux', 'fishash') ~ tuning_param == 0.05,
-        method %in% c('cleanser_cs', 'cleanser_dc') ~ tuning_param == 0.95,
+        method == 'cleanser_cs' ~ tuning_param == 0.8,
+        method == 'cleanser_dc' ~ tuning_param == 0.5,
         TRUE ~ as.logical(NA)
     )
 }

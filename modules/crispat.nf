@@ -1,3 +1,8 @@
+// NOTE: we remove the extra plots after running crispat, because the
+// potentially huge number of intermediate files (one plot per guide)
+// caused us to run afoul of HPC user inode quotas when running the
+// K562 gwps dataset
+
 process run_crispat_gauss {
     label "crispat_small"
     tag "simlab=${sim_label}"
@@ -39,7 +44,7 @@ process run_crispat_poisgauss {
 }
 
 process run_crispat_poisson {
-    label "crispat_big"
+    label "crispat_verybig"
     tag "simlab=${sim_label}"
 
     input:

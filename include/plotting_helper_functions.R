@@ -123,7 +123,7 @@ parse_simlab_varySignalNoiseCorr <- function(simlab) {
 # fishash: Ran it with 0 refitting (not shown), and 10 iterations of refitting (default, shown)
 # geomux: Ran it with min umi of 1 (not shown), and min umi of 5 (default, shown)
 # demuxem: Ran it with min signal 2 (shown), and min signal 10 (default, but doesn't perform well so not shown)
-# cleanser: Ran it with posterior cutoff 50% (not shown), and 95% (shown)
+# cleanser: Ran it with posterior cutoff 50%, 80%, 95%; for presentation, used default cutoff from their paper
 #
 # Exploratory analysis showed that the settings we picked presented
 # each of the methods in the best light in most scenarios
@@ -189,9 +189,16 @@ clean_trace_df <- function(df_trace) {
         dplyr::filter(!is.na(method)) %>%
         dplyr::mutate(method=dplyr::if_else(
             method=='cleanser',
-            paste0('cleanser_', stringr::str_match(tag, 'seqtech=(.*),simlab=.*')[,2], "_0.95"),
+            paste0('cleanser_', stringr::str_match(tag, 'seqtech=(.*),simlab=.*')[,2]),
             method
         )) %>%
+        dplyr::mutate(
+            method=dplyr::case_when(
+                method == 'cleanser_cs' ~ 'cleanser_cs_0.8',
+                method == 'cleanser_dc' ~ 'cleanser_dc_0.5',
+                TRUE ~ method
+            )
+        ) %>%
         dplyr::mutate(method=dplyr::if_else(
             method=='fishash',
             paste0('fishash_refit', stringr::str_match(tag, 'refit=(.*),simlab=.*')[,2]),

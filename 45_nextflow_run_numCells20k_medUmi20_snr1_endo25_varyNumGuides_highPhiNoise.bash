@@ -28,7 +28,7 @@ set -euxo pipefail
              -resume \
              -work-dir $NXF_WORKDIR/$RUN_NAME \
              -profile $NXF_PROFILE \
-             --skipCrispatNegBinom \
+             --slurmClusterOptionsVeryLong '--nodes=1 --qos=3d' \
              --cleanserMemFactor 4 \
              --demuxemMemFactor 4 \
              --crispatBigMemFactor 4 \
