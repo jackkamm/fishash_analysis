@@ -309,6 +309,25 @@ df_trace_sub %>%
     max() %>%
     cat(file=file.path(plot_dir, "20k_fishash_max_runtime.txt"))
 
+df_trace_sub %>%
+    dplyr::group_by(method, nguides, regime) %>%
+    dplyr::summarize(
+        median_minutes=median(minutes),
+        median_rss_gb=median(peak_rss_gb),
+        max_minutes=max(minutes),
+        max_rss_gb=max(peak_rss_gb),
+        .groups='drop'
+    ) %>%
+    dplyr::group_by(method) %>%
+    dplyr::summarize(
+        max_minutes=max(max_minutes),
+        max_median_minutes=max(median_minutes),
+        max_rss_gb=max(max_rss_gb),
+        max_median_rss_gb=max(median_rss_gb)
+    ) %>%
+    write.csv(file.path(plot_dir, "runtimes_summarized.csv"),
+              row.names=F)
+
 pdf(file.path(plot_dir, "numCells20k_varyNumGuides_subset_peakrss.pdf"), width=10, height=5)
 df_trace_sub %>%
     ggplot(aes(x=method, y=peak_rss_gb, color=method)) +
