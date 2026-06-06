@@ -206,7 +206,7 @@ merge_fishash_assignments_teststats <- function(list_teststats, list_assignments
         ) %>%
     rbindlist() %>%
     as.data.frame() %>%
-    mutate(type=factor(case_when(
+    mutate(prediction_outcome=factor(case_when(
         assigned & true_guide ~ 'TP',
         assigned & !true_guide ~ 'FP',
         !assigned & true_guide ~ 'FN',
@@ -434,22 +434,22 @@ bind_rows(
         summarize(TN=sum(TN), FN=sum(FN), FP=sum(FP), TP=sum(TP),
                   .groups='drop') %>%
         add_precision_recall() %>%
-        mutate(curve_type="Discretized") %>%
+        mutate(pr_curve="Discretized") %>%
         mutate(default=discreteSweep_at_default(method, tuning_param)),
     df_teststats_aggPrecRecall_varyNguides_compressed %>%
-        mutate(curve_type="Full"),
+        mutate(pr_curve="Full"),
     df_prec_recall_varyNguides_crispat %>%
-        mutate(curve_type="Discretized",
+        mutate(pr_curve="Discretized",
                default=TRUE),
     ) %>%
     mutate(method=forcats::fct_relevel(method, method_levels2)) %>%
     rename(default_threshold=default) %>%
-    arrange(desc(curve_type), method) %>%
+    arrange(desc(pr_curve), method) %>%
     {
         ggplot(., aes(x=Recall, y=Precision, color=method)) +
-            geom_step(aes(lty=curve_type), direction="vh") +
+            geom_step(aes(lty=pr_curve), direction="vh") +
             geom_point(aes(shape=default_threshold),
-                       data=filter(., curve_type=='Discretized')) +
+                       data=filter(., pr_curve=='Discretized')) +
             facet_grid(regime~nguides, labeller='label_both') +
             scale_color_manual(values=method_colors2) +
             scale_shape_manual(values=c(1,8)) +
@@ -468,9 +468,9 @@ pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_auprc_vs_f1.pdf
   set.seed(12345)
   bind_rows(
       df_teststats_varyNguides_auprc %>%
-          mutate(curve_type="Full"),
+          mutate(pr_curve="Full"),
       df_prec_recall_varyNguides_auprc %>%
-          mutate(curve_type="Discretized")
+          mutate(pr_curve="Discretized")
   ) %>%
       full_join(
           df_prec_recall_varyNguides %>%
@@ -479,9 +479,9 @@ pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_auprc_vs_f1.pdf
               select(method, sim_label, regime, nguides, F1)
       ) %>%
       .[sample(1:nrow(.)),] %>%
-      arrange(curve_type) %>%
-      ggplot(aes(x=F1, y=AUPRC, color=method, shape=curve_type)) +
-      geom_point(aes(size=curve_type)) +
+      arrange(pr_curve) %>%
+      ggplot(aes(x=F1, y=AUPRC, color=method, shape=pr_curve)) +
+      geom_point(aes(size=pr_curve)) +
       scale_color_manual(values=method_colors) +
       facet_grid(regime~nguides, labeller='label_both') +
       #xlim(0,1) + ylim(0,1) +
@@ -495,13 +495,13 @@ pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_auprc.pdf"),
     width=14, height=7)
 bind_rows(
     df_teststats_varyNguides_auprc %>%
-        mutate(curve_type="Full"),
+        mutate(pr_curve="Full"),
     df_prec_recall_varyNguides_auprc %>%
-        mutate(curve_type="Discretized")
+        mutate(pr_curve="Discretized")
 ) %>%
     mutate(method2=method) %>%
     mutate(method=if_else(
-        curve_type == 'Full',
+        pr_curve == 'Full',
         sprintf("%s (Full)", method),
         method
     )) %>%
@@ -517,6 +517,24 @@ bind_rows(
     theme_bw(base_size=16) +
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
 dev.off()
+
+bind_rows(
+    df_teststats_varyNguides_auprc %>%
+        mutate(pr_curve="Full"),
+    df_prec_recall_varyNguides_auprc %>%
+        mutate(pr_curve="Discretized")
+) %>%
+    dplyr::group_by(pr_curve, nguides, regime, method) %>%
+    dplyr::summarize(
+        median_auprc=median(AUPRC), .groups='drop_last'
+    ) %>%
+    dplyr::mutate(rank=rank(-median_auprc, ties.method='first')) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(rank==1) %>%
+    write.csv(
+        file.path(plot_dir, "varyNguides_auprc_top_per_scenario.csv"),
+        row.names=F
+    )
 
 pdf(file.path(plot_dir, "numCells20k_varyNumGuides_varyPrecision_precVsNom.pdf"),
     width=14, height=7)
@@ -542,7 +560,7 @@ dev.off()
 pdf(file.path(plot_dir, "numCells20k_varyNumGuides_hist_teststats.pdf"),
     width=14, height=7)
 df_fishash_teststats_varyNguides %>%
-    ggplot(aes(x=test_stat, fill=type)) +
+    ggplot(aes(x=test_stat, fill=prediction_outcome)) +
     geom_histogram(bins=50) +
     scale_x_continuous(trans='log1p',
                        breaks=c(0,1,10,100,1000,10000, 100000),
@@ -688,21 +706,21 @@ bind_rows(
         summarize(TN=sum(TN), FN=sum(FN), FP=sum(FP), TP=sum(TP),
                   .groups='drop') %>%
         add_precision_recall() %>%
-        mutate(curve_type="Discretized") %>%
+        mutate(pr_curve="Discretized") %>%
         mutate(default=discreteSweep_at_default(method, tuning_param)),
     df_teststats_aggPrecRecall_varyMoi_compressed %>%
-        mutate(curve_type="Full"),
+        mutate(pr_curve="Full"),
     df_prec_recall_varyMoi_crispat %>%
-        mutate(curve_type="Discretized",
+        mutate(pr_curve="Discretized",
                default=TRUE),
     ) %>%
     mutate(method=forcats::fct_relevel(method, method_levels2)) %>%
     rename(default_threshold=default) %>%
-    arrange(desc(curve_type), method) %>% {
+    arrange(desc(pr_curve), method) %>% {
         ggplot(., aes(x=Recall, y=Precision, color=method)) +
-            geom_step(aes(lty=curve_type), direction="vh") +
+            geom_step(aes(lty=pr_curve), direction="vh") +
             geom_point(aes(shape=default_threshold),
-                       data=filter(., curve_type=='Discretized')) +
+                       data=filter(., pr_curve=='Discretized')) +
             facet_wrap(~moi, nrow=2, labeller='label_both') +
             scale_color_manual(values=method_colors2) +
             scale_shape_manual(values=c(1,8)) +
@@ -721,9 +739,9 @@ pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_auprc_vs_f1.pdf"),
   set.seed(12345)
   bind_rows(
       df_teststats_varyMoi_auprc %>%
-          mutate(curve_type="Full"),
+          mutate(pr_curve="Full"),
       df_prec_recall_varyMoi_auprc %>%
-          mutate(curve_type="Discretized")
+          mutate(pr_curve="Discretized")
   ) %>%
       full_join(
           df_prec_recall_varyMoi %>%
@@ -732,9 +750,9 @@ pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_auprc_vs_f1.pdf"),
               select(method, sim_label, moi, F1)
       ) %>%
       .[sample(1:nrow(.)),] %>%
-      arrange(curve_type) %>%
-      ggplot(aes(x=F1, y=AUPRC, color=method, shape=curve_type)) +
-      geom_point(aes(size=curve_type)) +
+      arrange(pr_curve) %>%
+      ggplot(aes(x=F1, y=AUPRC, color=method, shape=pr_curve)) +
+      geom_point(aes(size=pr_curve)) +
       scale_color_manual(values=method_colors) +
       facet_wrap(~moi, nrow=2, labeller='label_both') +
       #xlim(0,1) + ylim(0,1) +
@@ -748,13 +766,13 @@ pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_auprc.pdf"),
     width=14, height=7)
 bind_rows(
     df_teststats_varyMoi_auprc %>%
-        mutate(curve_type="Full"),
+        mutate(pr_curve="Full"),
     df_prec_recall_varyMoi_auprc %>%
-        mutate(curve_type="Discretized")
+        mutate(pr_curve="Discretized")
 ) %>%
     mutate(method2=method) %>%
     mutate(method=if_else(
-        curve_type == 'Full',
+        pr_curve == 'Full',
         sprintf("%s (Full)", method),
         method
     )) %>%
@@ -770,6 +788,24 @@ bind_rows(
     theme_bw(base_size=16) +
     theme(axis.text.x=element_text(angle=45, hjust=1), legend.position='none')
 dev.off()
+
+bind_rows(
+    df_teststats_varyMoi_auprc %>%
+        mutate(pr_curve="Full"),
+    df_prec_recall_varyMoi_auprc %>%
+        mutate(pr_curve="Discretized")
+) %>%
+    dplyr::group_by(pr_curve, moi, method) %>%
+    dplyr::summarize(
+        median_auprc=median(AUPRC), .groups='drop_last'
+    ) %>%
+    dplyr::mutate(rank=rank(-median_auprc, ties.method='first')) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(rank==1) %>%
+    write.csv(
+        file.path(plot_dir, "varyMoi_auprc_top_per_scenario.csv"),
+        row.names=F
+    )
 
 pdf(file.path(plot_dir, "numCells20k_varyMoi_varyPrecision_precVsNom.pdf"),
     width=14, height=7)
@@ -795,7 +831,7 @@ dev.off()
 pdf(file.path(plot_dir, "numCells20k_varyMoi_hist_teststats.pdf"),
     width=14, height=7)
 df_fishash_teststats_varyMoi %>%
-    ggplot(aes(x=test_stat, fill=type)) +
+    ggplot(aes(x=test_stat, fill=prediction_outcome)) +
     geom_histogram(bins=50) +
     scale_x_continuous(trans='log1p',
                        breaks=c(0,1,10,100,1000,10000, 100000),
