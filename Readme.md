@@ -1,7 +1,7 @@
 
 This repo is to reproduce the results in our [fishash manuscript](https://www.biorxiv.org/content/10.64898/2026.01.22.701179).
 
-The `master` branch of this repo is for the original (v1) preprint results. The updated results for the revision are in the `revision` branch.
+The [master](https://github.com/jackkamm/fishash_analysis/tree/master) branch of this repo is for the original (v1) preprint results. The updated results for the revision are in the [revision](https://github.com/jackkamm/fishash_analysis/tree/revision) branch.
 
 Prerequisites:
 * Nextflow
